@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { 
   Sparkles, MessageSquare, Phone, Globe, AlertTriangle, Send, 
   UserCheck, ShieldCheck, Clock, Building2, MapPin, Calendar, 
-  CreditCard, CheckCheck, FileText, ChevronRight, User, Star,
+  CreditCard, CheckCheck, FileText, ChevronRight, ChevronDown, User, Star,
   Compass, UserPlus, Flame, CheckCircle2, XCircle, Search, BarChart3,
   Download, ArrowRight, ShieldAlert, RefreshCw, Car, Lock, Unlock, Zap, Check
 } from 'lucide-react';
@@ -241,6 +241,7 @@ export default function UnifiedInboxPage() {
   const [replyText, setReplyText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
+  const [isAuditCardExpanded, setIsAuditCardExpanded] = useState(false);
 
   // Guide Roster Desk States
   const [guideRoster, setGuideRoster] = useState<GuideRosterItem[]>(INITIAL_GUIDE_ROSTER);
@@ -398,9 +399,17 @@ export default function UnifiedInboxPage() {
           });
         });
 
-        if (!selectedSessionId && data.conversations[0]) {
-          setSelectedSessionId(data.conversations[0].id);
-        }
+        setSelectedSessionId((currentSelectedId) => {
+          if (currentSelectedId) {
+            const cleanCur = currentSelectedId.replace(/[^0-9]/g, '');
+            const exists = data.conversations.find((c: any) => 
+              c.id === currentSelectedId || 
+              (cleanCur && c.phone.replace(/[^0-9]/g, '') === cleanCur)
+            );
+            if (exists) return exists.id;
+          }
+          return data.conversations[0]?.id || '';
+        });
       }
     } catch {
       // Silent poll catch
@@ -413,7 +422,11 @@ export default function UnifiedInboxPage() {
     return () => clearInterval(listTimer);
   }, []);
 
-  const activeSession = sessions.find((s) => s.id === selectedSessionId) || sessions[0] || null;
+  const activeSession =
+    sessions.find((s) => s.id === selectedSessionId) ||
+    sessions.find((s) => selectedSessionId && s.phone.replace(/[^0-9]/g, '') === selectedSessionId.replace(/[^0-9]/g, '')) ||
+    sessions[0] ||
+    null;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -1272,107 +1285,141 @@ export default function UnifiedInboxPage() {
               </div>
             </div>
 
-            {/* Conversation Quality Score & Audit Widget */}
-            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3.5 space-y-2.5">
+            {/* 1. Direct Travel OS Operations Actions (High-Priority Operational Controls) */}
+            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3.5 space-y-2.5 shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                 <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <BarChart3 className="w-3.5 h-3.5 text-amber-400" />
-                  Conversation Quality Audit
+                  <Zap className="w-3.5 h-3.5 text-amber-400" />
+                  Direct Travel OS Actions
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  Grade A ({activeSession.aiQualityScore || 95}%)
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                  Instant Dispatch
                 </span>
               </div>
 
-              <div className="space-y-1.5 text-xs">
-                <div className="flex items-center justify-between text-slate-300">
-                  <span className="text-slate-400">Intent Resolution:</span>
-                  <span className="font-semibold text-emerald-400">{activeSession.auditSummary?.intentAccuracy || 96}% Accurate</span>
-                </div>
-                <div className="flex items-center justify-between text-slate-300">
-                  <span className="text-slate-400">Response Turnaround:</span>
-                  <span className="font-mono text-white">{activeSession.minutesElapsed} mins</span>
-                </div>
-                <div className="flex items-center justify-between text-slate-300">
-                  <span className="text-slate-400">Repetitive Phrasing:</span>
-                  <span className="text-emerald-400 font-semibold">0 Flags (Clean)</span>
-                </div>
-                <div className="flex items-center justify-between text-slate-300">
-                  <span className="text-slate-400">Guest Sentiment:</span>
-                  <span className="text-amber-400 font-bold uppercase">{activeSession.auditSummary?.sentiment || 'SATISFIED'}</span>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                  setAuditTargetSession(activeSession);
-                  setIsAuditModalOpen(true);
-                }}
-                className="w-full mt-1 bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold p-2 rounded-lg transition flex items-center justify-center gap-1.5"
-              >
-                <span>🔍 Inspect Turn-by-Turn Diagnostic</span>
-              </button>
-            </div>
-
-            {/* Direct Travel OS Operations Actions */}
-            <div className="space-y-2">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                Direct Travel OS Actions
-              </span>
-
-              <button
-                onClick={async () => {
-                  const seatsToHold = 2;
-                  try {
-                    const res = await fetch('/api/departures/hold', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        departureId: 'dep_1',
-                        seats: seatsToHold,
-                        contactName: activeSession.customerName,
-                        phone: activeSession.phone,
-                        reason: 'Hold placed by Ambassador in Unified Inbox',
-                      }),
-                    });
-
-                    if (res.ok) {
-                      const text = `🔒 *SEATS RESERVED (30-MIN HOLD)*\n\nDear ${activeSession.customerName},\nWe have held ${seatsToHold} seats for you on Saturday's departure (#DurgasOf Mumbai).\n\nPlease complete advance payment within 30 minutes to confirm your tickets:\n👉 https://khakitours.com/pay/hold-sat-${Date.now().toString().slice(-4)}`;
-                      fetch('/api/whatsapp', {
+              <div className="space-y-2 pt-0.5">
+                <button
+                  onClick={async () => {
+                    const seatsToHold = 2;
+                    try {
+                      const res = await fetch('/api/departures/hold', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ to: activeSession.phone, message: text }),
-                      }).catch(() => {});
+                        body: JSON.stringify({
+                          departureId: 'dep_1',
+                          seats: seatsToHold,
+                          contactName: activeSession.customerName,
+                          phone: activeSession.phone,
+                          reason: 'Hold placed by Ambassador in Unified Inbox',
+                        }),
+                      });
 
-                      setActionNotice(`Locked ${seatsToHold} seats in calendar. Sent WhatsApp hold notice.`);
-                      setTimeout(() => setActionNotice(null), 5000);
+                      if (res.ok) {
+                        const text = `🔒 *SEATS RESERVED (30-MIN HOLD)*\n\nDear ${activeSession.customerName},\nWe have held ${seatsToHold} seats for you on Saturday's departure (#DurgasOf Mumbai).\n\nPlease complete advance payment within 30 minutes to confirm your tickets:\n👉 https://khakitours.com/pay/hold-sat-${Date.now().toString().slice(-4)}`;
+                        fetch('/api/whatsapp', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ to: activeSession.phone, message: text }),
+                        }).catch(() => {});
+
+                        setActionNotice(`Locked ${seatsToHold} seats in calendar. Sent WhatsApp hold notice.`);
+                        setTimeout(() => setActionNotice(null), 5000);
+                      }
+                    } catch {
+                      setActionNotice(`Held ${seatsToHold} seats on Saturday Departure.`);
+                      setTimeout(() => setActionNotice(null), 4000);
                     }
-                  } catch {
-                    setActionNotice(`Held ${seatsToHold} seats on Saturday Departure.`);
-                    setTimeout(() => setActionNotice(null), 4000);
-                  }
-                }}
-                className="w-full bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold p-2.5 rounded-lg transition flex items-center justify-between"
+                  }}
+                  className="w-full bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold p-2.5 rounded-lg transition flex items-center justify-between group"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <Lock className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Hold 2 Seats on Saturday Slot</span>
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-amber-400 transition" />
+                </button>
+
+                <button
+                  onClick={() => sendTemplateAction('CONFIRMATION')}
+                  className="w-full bg-emerald-950/40 hover:bg-emerald-900/40 border border-emerald-500/40 text-emerald-300 text-xs font-semibold p-2.5 rounded-lg transition flex items-center justify-between group"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <CreditCard className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Send UPI Instant Pass on WhatsApp</span>
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-emerald-400 group-hover:translate-x-0.5 transition" />
+                </button>
+
+                <button
+                  onClick={() => sendTemplateAction('LOCATION_PIN')}
+                  className="w-full bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold p-2.5 rounded-lg transition flex items-center justify-between group"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Dispatch G-Maps Pin &amp; Guide Contact</span>
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-blue-400 transition" />
+                </button>
+              </div>
+            </div>
+
+            {/* 2. Collapsible Conversation Quality Score & Audit Widget */}
+            <div className="bg-slate-900/40 border border-slate-800 rounded-xl overflow-hidden transition">
+              <button
+                onClick={() => setIsAuditCardExpanded(!isAuditCardExpanded)}
+                className="w-full p-3 flex items-center justify-between text-left hover:bg-slate-900/80 transition"
               >
-                <span>🔒 Hold 2 Seats on Saturday Slot</span>
-                <ChevronRight className="w-4 h-4 text-slate-500" />
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">
+                    Conversation Quality Audit
+                  </span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    Grade A ({activeSession.aiQualityScore || 95}%)
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
+                  <span className="text-amber-400/90 font-mono uppercase">{activeSession.auditSummary?.sentiment || 'SATISFIED'}</span>
+                  {isAuditCardExpanded ? (
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                  ) : (
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                  )}
+                </div>
               </button>
 
-              <button
-                onClick={() => sendTemplateAction('CONFIRMATION')}
-                className="w-full bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold p-2.5 rounded-lg transition flex items-center justify-between"
-              >
-                <span>💳 Send UPI Instant Pass on WhatsApp</span>
-                <ChevronRight className="w-4 h-4 text-emerald-400" />
-              </button>
+              {isAuditCardExpanded && (
+                <div className="p-3.5 pt-0 space-y-2.5 border-t border-slate-800/80 text-xs animate-fadeIn">
+                  <div className="space-y-1.5 pt-2 text-xs">
+                    <div className="flex items-center justify-between text-slate-300">
+                      <span className="text-slate-400">Intent Resolution:</span>
+                      <span className="font-semibold text-emerald-400">{activeSession.auditSummary?.intentAccuracy || 96}% Accurate</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-300">
+                      <span className="text-slate-400">Response Turnaround:</span>
+                      <span className="font-mono text-white">{activeSession.minutesElapsed} mins</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-300">
+                      <span className="text-slate-400">Repetitive Phrasing:</span>
+                      <span className="text-emerald-400 font-semibold">0 Flags (Clean)</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-300">
+                      <span className="text-slate-400">Guest Sentiment:</span>
+                      <span className="text-amber-400 font-bold uppercase">{activeSession.auditSummary?.sentiment || 'SATISFIED'}</span>
+                    </div>
+                  </div>
 
-              <button
-                onClick={() => sendTemplateAction('LOCATION_PIN')}
-                className="w-full bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold p-2.5 rounded-lg transition flex items-center justify-between"
-              >
-                <span>📍 Dispatch G-Maps Pin & Guide Contact</span>
-                <ChevronRight className="w-4 h-4 text-slate-500" />
-              </button>
+                  <button
+                    onClick={() => {
+                      setAuditTargetSession(activeSession);
+                      setIsAuditModalOpen(true);
+                    }}
+                    className="w-full mt-1 bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold p-2 rounded-lg transition flex items-center justify-center gap-1.5"
+                  >
+                    <span>🔍 Inspect Turn-by-Turn Diagnostic</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
