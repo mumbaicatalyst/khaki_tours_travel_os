@@ -1,0 +1,26 @@
+import React from 'react';
+
+interface BrandMarkProps {
+  className?: string;
+}
+
+export function BrandMark({ className = 'w-9 h-9' }: BrandMarkProps) {
+  return (
+    <div
+      className={`rounded-lg bg-slate-950/90 border border-[#c84a1c]/30 flex items-center justify-center p-1.5 shadow-md shadow-[#c84a1c]/10 shrink-0 transition ${className}`}
+      title="Khaki Tours Official Emblem"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 48 46"
+        className="w-full h-full object-contain"
+        aria-label="Khaki Tours Brand Mark"
+      >
+        <path
+          fill="#c84a1c"
+          d="M23 3h2v1H23zM22 4h4v1H22zM22 5h4v1H22zM22 6h4v1H22zM17 7h2v1H17zM21 7h6v1H21zM29 7h2v1H29zM15 8h4v1H15zM21 8h6v1H21zM29 8h4v1H29zM13 9h6v1H13zM21 9h6v1H21zM29 9h6v1H29zM12 10h6v1H12zM21 10h6v1H21zM29 10h7v1H29zM11 11h7v1H11zM21 11h6v1H21zM30 11h7v1H30zM11 12h6v1H11zM21 12h6v1H21zM31 12h7v1H31zM10 13h5v1H10zM21 13h6v1H21zM33 13h5v1H33zM9 14h5v1H9zM21 14h7v1H21zM34 14h5v1H34zM9 15h5v1H9zM20 15h8v1H20zM35 15h4v1H35zM8 16h5v1H8zM20 16h8v1H20zM35 16h5v1H35zM8 17h4v1H8zM20 17h8v1H20zM36 17h4v1H36zM8 18h3v1H8zM19 18h10v1H19zM37 18h3v1H37zM18 19h13v1H18zM11 20h26v1H11zM6 21h18v1H6zM25 21h17v1H25zM4 22h19v1H4zM25 22h20v1H25zM3 23h20v1H3zM24 23h21v1H24zM5 24h39v1H5zM7 25h35v1H7zM11 26h25v1H11zM16 27h15v1H16zM38 27h2v1H38zM8 28h4v1H8zM19 28h9v1H19zM36 28h4v1H36zM8 29h5v1H8zM19 29h9v1H19zM35 29h5v1H35zM8 30h5v1H8zM19 30h9v1H19zM35 30h5v1H35zM9 31h4v1H9zM20 31h8v1H20zM35 31h4v1H35zM9 32h5v1H9zM20 32h7v1H20zM34 32h5v1H34zM10 33h6v1H10zM20 33h7v1H20zM33 33h5v1H33zM10 34h7v1H10zM20 34h7v1H20zM31 34h6v1H31zM11 35h8v1H11zM21 35h6v1H21zM29 35h8v1H29zM12 36h7v1H12zM21 36h6v1H21zM28 36h8v1H28zM14 37h6v1H14zM21 37h6v1H21zM28 37h6v1H28zM15 38h5v1H15zM21 38h6v1H21zM28 38h5v1H28zM17 39h3v1H17zM21 39h6v1H21zM28 39h3v1H28zM22 40h4v1H22zM22 41h4v1H22zM22 42h4v1H22zM23 43h2v1H23z"
+        />
+      </svg>
+    </div>
+  );
+}

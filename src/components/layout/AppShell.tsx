@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRole, ROLE_CONFIGS, UserRole } from '@/context/RoleContext';
+import { BrandMark } from '@/components/brand/BrandMark';
 import {
   LayoutDashboard,
   Ticket,
@@ -91,19 +92,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <aside className="w-64 bg-slate-900/90 border-r border-slate-800 flex flex-col shrink-0 min-h-screen sticky top-0 h-screen overflow-y-auto custom-scrollbar">
         {/* Brand Header */}
         <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <span className="w-9 h-9 rounded-lg bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-extrabold text-slate-950 text-lg shadow-md shadow-amber-500/10">
-              K
-            </span>
+          <Link href="/" className="flex items-center space-x-3 group">
+            <BrandMark className="w-9 h-9 group-hover:border-[#c84a1c]/60 transition" />
             <div>
-              <div className="font-extrabold tracking-tight text-white text-base leading-tight">
+              <div className="font-extrabold tracking-tight text-white text-base leading-tight group-hover:text-amber-300 transition">
                 KHAKI TOURS
               </div>
-              <div className="text-[10px] uppercase text-amber-500 font-bold tracking-wider">
+              <div className="text-[10px] uppercase text-[#c84a1c] font-bold tracking-wider">
                 Travel OS &bull; Mumbai
               </div>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Active Role Quick Card in Sidebar */}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { BrandMark } from '@/components/brand/BrandMark';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -11,8 +12,8 @@ export default function LoginPage() {
     <div className="min-h-[75vh] flex items-center justify-center">
       <div className="w-full max-w-md p-8 bg-slate-900/70 border border-slate-800 rounded-2xl shadow-xl space-y-6">
         <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 items-center justify-center font-bold text-slate-950 text-xl shadow-md">
-            K
+          <div className="inline-flex justify-center">
+            <BrandMark className="w-12 h-12 p-2" />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Khaki Travel OS</h1>
           <p className="text-xs text-slate-400">Staff & Operations Desk Authentication</p>
