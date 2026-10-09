@@ -27,6 +27,7 @@ import {
   BarChart3,
   Settings,
   Send,
+  LogOut,
 } from 'lucide-react';
 
 interface NavItem {
@@ -85,6 +86,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { role, setRole, config, showAllModules, setShowAllModules, isModuleVisible } = useRole();
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } finally {
+      window.location.href = '/login';
+    }
+  };
+
+  if (pathname === '/login') {
+    return <main className="min-h-screen bg-slate-950 text-slate-100">{children}</main>;
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 antialiased flex w-full">
@@ -175,10 +188,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="p-3.5 border-t border-slate-800 text-[11px] text-slate-500 space-y-1">
-          <div className="font-semibold text-slate-400">Khaki Tours Pvt Ltd</div>
-          <div>310 Hari Chambers, Fort</div>
-          <div className="text-[10px] text-amber-500 font-mono">Operations Release v1.3</div>
+        <div className="p-3.5 border-t border-slate-800 text-[11px] text-slate-500 space-y-2">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="w-full py-1.5 px-2 bg-slate-950/80 hover:bg-rose-950/40 text-slate-400 hover:text-rose-300 border border-slate-800 hover:border-rose-800/40 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Sign Out Desk</span>
+          </button>
+          <div>
+            <div className="font-semibold text-slate-400">Khaki Tours Pvt Ltd</div>
+            <div>310 Hari Chambers, Fort</div>
+            <div className="text-[10px] text-amber-500 font-mono mt-0.5">Operations Release v1.3</div>
+          </div>
         </div>
       </aside>
 
@@ -262,6 +285,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         </button>
                       );
                     })}
+
+                    <div className="pt-1.5 border-t border-slate-800">
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="w-full text-left p-2 rounded-lg text-rose-400 hover:bg-rose-950/30 text-xs font-semibold flex items-center gap-2 transition"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Sign Out of Desk</span>
+                      </button>
+                    </div>
                   </div>
                 </>
               )}
