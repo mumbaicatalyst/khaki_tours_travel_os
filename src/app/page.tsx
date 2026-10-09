@@ -11,21 +11,30 @@ export default function HomePage() {
             Omnichannel Operations, Automated Fast-Path Bookings, and Guide Dispatch Hub for Mumbai & Outbound Expeditions.
           </p>
         </div>
-        <div className="flex flex-col gap-2 shrink-0 sm:w-48">
+        <div className="flex flex-col gap-2 shrink-0 sm:w-56">
           <Link
-            href="/inbox"
-            className="w-full px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg transition shadow-md shadow-amber-500/10 flex items-center justify-center gap-1.5"
+            href="/marketing"
+            className="w-full px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-lg transition shadow-md shadow-amber-500/20 flex items-center justify-center gap-1.5"
           >
-            <span>💬</span>
-            <span>Open Unified Inbox</span>
+            <span>⭐</span>
+            <span>Google Reviews & Marketing</span>
           </Link>
-          <Link
-            href="/dispatch"
-            className="w-full px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-lg border border-slate-700 hover:border-slate-600 transition flex items-center justify-center gap-1.5"
-          >
-            <span>🧭</span>
-            <span>Live Dispatch Board</span>
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href="/inbox"
+              className="flex-1 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-lg border border-slate-700 hover:border-slate-600 transition flex items-center justify-center gap-1.5"
+            >
+              <span>💬</span>
+              <span>Inbox</span>
+            </Link>
+            <Link
+              href="/dispatch"
+              className="flex-1 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-lg border border-slate-700 hover:border-slate-600 transition flex items-center justify-center gap-1.5"
+            >
+              <span>🧭</span>
+              <span>Dispatch</span>
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -53,6 +62,41 @@ export default function HomePage() {
           <div className="text-xs uppercase tracking-wider text-slate-400 font-semibold">Tally Prime Accounting</div>
           <div className="text-3xl font-bold text-emerald-400 mt-2">Synchronized</div>
           <div className="text-xs text-slate-400 mt-1">Daily Automated Ledger Sync</div>
+        </div>
+      </div>
+
+      {/* Featured Engine: Post-Tour Google Reviews & Marketing Growth */}
+      <div className="bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-900 border border-amber-500/30 rounded-xl p-5 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-start gap-3.5">
+          <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 shrink-0">
+            <span className="text-xl">⭐</span>
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Growth & Guest Feedback Engine</span>
+              <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                Live &bull; 4.93★ Rating
+              </span>
+            </div>
+            <h2 className="text-base font-bold text-white mt-1">Post-Tour Google Reviews & WhatsApp Broadcast Studio</h2>
+            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
+              Automated 2-hour post-walk WhatsApp review triggers, 1-click Google Maps review capture, low-occupancy seat boosts, and paid ad attribution (4.52x ROAS).
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <Link
+            href="/manifests"
+            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-slate-600 rounded-lg text-xs font-semibold transition"
+          >
+            📋 Walk Rosters
+          </Link>
+          <Link
+            href="/marketing"
+            className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg transition shadow-md shadow-amber-500/10 flex items-center gap-1.5"
+          >
+            <span>Launch Review Engine &rarr;</span>
+          </Link>
         </div>
       </div>
 
