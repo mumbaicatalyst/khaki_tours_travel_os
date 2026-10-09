@@ -1,5 +1,6 @@
 import { inMemoryCatalog } from '@/lib/supabase/seed';
 import { appStore } from '@/lib/db/store';
+import { queryGrokConcierge } from '@/lib/ai/grok';
 
 export interface GeminiConciergeResult {
   replyText: string;
@@ -19,9 +20,10 @@ export async function queryGeminiConcierge(params: {
 
   const apiKey = process.env.GEMINI_API_KEY || '';
   const model = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+  const hasGrokKey = Boolean(process.env.XAI_API_KEY || process.env.GROK_API_KEY);
 
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not configured in .env.local');
+  if (!apiKey && !hasGrokKey) {
+    throw new Error('Neither GEMINI_API_KEY nor XAI_API_KEY is configured in environment');
   }
 
   // 0. Programmatic Guardrail: Intercept prompt injection and fake system prefixes
@@ -137,7 +139,8 @@ CRITICAL INSTRUCTIONS:
   let data: any = null;
   let lastError: any = null;
 
-  for (const m of uniqueModels) {
+  if (apiKey) {
+    for (const m of uniqueModels) {
     try {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`;
       const response = await fetch(endpoint, {
@@ -169,11 +172,30 @@ CRITICAL INSTRUCTIONS:
       lastError = err;
     }
   }
-
-  if (!data) {
-    throw new Error(`All Gemini models failed: ${lastError?.message || 'Unavailable'}`);
   }
-  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+  let rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+  // 4. Secondary Fallback: xAI Grok (when Gemini rate-limited or fails)
+  if (!rawText) {
+    console.warn(`[Gemini Exceeded]: ${lastError?.message || 'Quota/Network error'}. Attempting xAI Grok fallback...`);
+    try {
+      const grokResponse = await queryGrokConcierge({
+        systemInstruction,
+        history: recentHistory,
+        messageText,
+      });
+      if (grokResponse) {
+        rawText = grokResponse;
+      }
+    } catch (grokErr: any) {
+      console.warn('[xAI Grok Fallback Error]:', grokErr.message || grokErr);
+    }
+  }
+
+  if (!rawText) {
+    throw new Error(`All LLM models failed (Gemini & Grok): ${lastError?.message || 'Unavailable'}`);
+  }
 
   const isHumanTakeoverRequested =
     rawText.includes('[HUMAN_TAKEOVER]') ||
