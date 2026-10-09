@@ -54,6 +54,20 @@ export function generateConciergeReply(params: {
     };
   }
 
+  // 2.5 Bespoke & Culinary Inquiries (e.g. Irani Chai, Food walks, Parsi trails)
+  if (
+    lower.includes('irani') ||
+    lower.includes('chai') ||
+    lower.includes('culinary') ||
+    lower.includes('food walk') ||
+    lower.includes('bespoke')
+  ) {
+    return {
+      replyText: `☕ *Khaki Tours • Bespoke Culinary & Heritage Experiences*\n\nWhile an Irani Chai private walk is not on our public weekend schedule this week, Khaki Tours custom-curates private walks for groups and families through our Bespoke Tour Studio!\n\n• 🏛️ *Bespoke Studio:* https://khakitours.com/bespoke\n• 🚶 *Upcoming Public Alternatives:* Explore our South Mumbai weekend walks like #BelowTheHill (starting near Cafe Ideal) or #ProcterAndAmble.\n• 🎟️ *Weekend Schedule:* View public departures at https://khakitours.com/calendar\n\nWould you like our Operations Ambassador to connect with you for a bespoke quote?`,
+      intent: 'TOUR_DETAILS',
+    };
+  }
+
   // 3. Tour Departure Availability / Schedule Queries
   // (e.g. "what tours are available this sunday", "sunday walk", "weekend schedule", "what tours tomorrow")
   const isSundayQuery = lower.includes('sunday') || lower.includes('sun');

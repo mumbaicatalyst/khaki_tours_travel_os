@@ -17,6 +17,14 @@ export interface JevLeadAnalysis {
   recommendedTourTheme: string;
 }
 
+export interface JevTriageResult {
+  routedTo: 'LOCAL_FAST_PATH' | 'GEMINI_CONVERSATIONAL';
+  category: 'POLICY_FAQ' | 'BOOKING_FAST_PATH' | 'CORPORATE_VIP' | 'CONVERSATIONAL';
+  replyText?: string;
+  isTakeoverRequested?: boolean;
+  leadAnalysis: JevLeadAnalysis;
+}
+
 export class JevClient {
   private apiKey: string;
   private endpoint = 'https://api.typesafe.ai/v1/systemone';
@@ -31,9 +39,10 @@ export class JevClient {
   }
 
   /**
-   * Evaluate raw message or audio transcript using Jev System One model
+   * High-Velocity Triage Router: Evaluates whether an incoming message can be resolved
+   * immediately via deterministic local handlers (0 tokens, ~90ms) or needs Gemini.
    */
-  async analyzeInboundLead(messageText: string): Promise<JevLeadAnalysis | null> {
+  async triageInboundMessage(messageText: string): Promise<JevTriageResult | null> {
     if (!this.isAvailable()) {
       return null;
     }
@@ -49,9 +58,28 @@ export class JevClient {
           state: messageText,
           model: this.model,
           questions: {
+            category: {
+              type: 'choice',
+              instructions: 'What operational bucket does this customer message fall into?',
+              criteria: {
+                POLICY_FAQ: 'Asking about cancellation, refund, rain/monsoon rules, dress code, or arrival guidelines',
+                CORPORATE_VIP: 'Inquiring for a company offsite, executive delegation, corporate proposal, or business team',
+                CONVERSATIONAL: 'Questions about Mumbai history, tour details, bookings, or open-ended chat',
+              },
+            },
+            policy_topic: {
+              type: 'choice',
+              instructions: 'If this is a policy question, which specific topic is being asked?',
+              criteria: {
+                REFUND: 'Cancellation, refund percentages, or money back',
+                MONSOON: 'Rain, monsoon weather, BMC alerts, or operational weather calls',
+                DRESS_CODE: 'What to wear, shoes, modest clothing, or places of worship etiquette',
+                GENERAL: 'General rules or non-policy questions',
+              },
+            },
             is_corporate: {
               type: 'noul',
-              instructions: 'Is this message inquiring on behalf of a company, corporate offsite, executive delegation, consulate, or business team?',
+              instructions: 'Is this message inquiring on behalf of a company, corporate offsite, or executive delegation?',
             },
             urgency: {
               type: 'choice',
@@ -76,19 +104,20 @@ export class JevClient {
       });
 
       if (!response.ok) {
-        console.error(`[Jev AI] API responded with status ${response.status}`);
         return null;
       }
 
       const data = await response.json();
       const answers = data.answers || {};
 
+      const categoryChoice = answers.category?.choice || 'CONVERSATIONAL';
+      const policyTopic = answers.policy_topic?.choice || 'GENERAL';
       const corpProb = answers.is_corporate?.noul || 0;
       const urgencyChoice = answers.urgency?.choice || 'GENERAL_INQUIRY';
       const isLargeGroup = (answers.is_large_group?.noul || 0) > 0.6;
 
-      return {
-        isCorporate: corpProb > 0.6,
+      const leadAnalysis: JevLeadAnalysis = {
+        isCorporate: corpProb > 0.6 || categoryChoice === 'CORPORATE_VIP',
         corporateProbability: corpProb,
         urgency: urgencyChoice,
         estimatedGroupSize: isLargeGroup ? 12 : 2,
@@ -96,10 +125,57 @@ export class JevClient {
         mobilityOrPacingNotes: [],
         recommendedTourTheme: corpProb > 0.6 ? 'Architectural / Heritage Evangelism' : 'Standard Heritage Walk',
       };
-    } catch (error) {
-      console.error('[Jev AI] Error during lead evaluation:', error);
+
+      // 1. FAST-PATH ROUTE: Deterministic Policy FAQs (0 Gemini tokens, ~50ms)
+      if (categoryChoice === 'POLICY_FAQ') {
+        let reply = '';
+        if (policyTopic === 'REFUND') {
+          reply = `🏛️ *Khaki Tours • Cancellation & Refund Policy*\n\n• *Advance Payment:* 100% advance payment strictly mandatory before departure.\n• *Cancellations >72 hours before start:* 50% refund.\n• *Cancellations <72 hours before start:* Strictly non-refundable.\n• *Company-Initiated Cancellation:* 100% full refund.\n\n👉 If you need assistance with an existing booking, reply with your booking ID or ask to connect with our Operations Desk!`;
+        } else if (policyTopic === 'MONSOON') {
+          reply = `🌧️ *Khaki Tours • Monsoon & Weather Guidelines*\n\n• Walks operate *rain or shine* through Mumbai's showers.\n• We only cancel if an official *BMC / IMD Red Alert* is declared for Mumbai.\n• *Recommended Gear:* Rainwear/umbrella and sturdy waterproof footwear.\n• In the event of an official weather cancellation, guests receive a 100% full refund or complimentary reschedule.\n\nSee you on the heritage trail!`;
+        } else if (policyTopic === 'DRESS_CODE') {
+          reply = `👟 *Khaki Tours • Dress Code & Etiquette*\n\n• *Attire:* Comfortable, lightweight cotton clothing recommended.\n• *Places of Worship:* Modest clothing with knees and shoulders covered for sacred spaces.\n• *Footwear:* Sturdy, comfortable walking shoes (walks cover 1.5–2.5 km).\n• *Arrival:* Please arrive 15 minutes prior to start at the designated assembly point.`;
+        }
+
+        if (reply) {
+          return {
+            routedTo: 'LOCAL_FAST_PATH',
+            category: 'POLICY_FAQ',
+            replyText: reply,
+            leadAnalysis,
+          };
+        }
+      }
+
+      // 2. FAST-PATH ROUTE: Corporate & Executive Delegations (0 Gemini tokens)
+      if (categoryChoice === 'CORPORATE_VIP' || corpProb > 0.75) {
+        const corpReply = `🏢 *Khaki Tours • Executive & Corporate Desk*\n\nThank you for reaching out on behalf of your team.\n\nYour inquiry has been flagged with *P1 Critical Priority* to Founder *Bharat Gothoskar* and Operations:\n• ⏱️ *15-Minute SLA:* A customized proposal will be prepared promptly\n• 📑 *GST Compliant:* SAC Code 998554 (18% GST with full Input Tax Credit)\n• 🏛️ *Experiences:* Bespoke Fort heritage walks, architectural evangelism, or private open jeep safaris for 5 to 150+ guests.\n\nOur team is reviewing your requirements now!`;
+        return {
+          routedTo: 'LOCAL_FAST_PATH',
+          category: 'CORPORATE_VIP',
+          replyText: corpReply,
+          leadAnalysis,
+        };
+      }
+
+      // 3. CONVERSATIONAL ROUTE: Pass to Gemini for rich storytelling
+      return {
+        routedTo: 'GEMINI_CONVERSATIONAL',
+        category: 'CONVERSATIONAL',
+        leadAnalysis,
+      };
+    } catch (err) {
+      console.error('[Jev Triage Error]:', err);
       return null;
     }
+  }
+
+  /**
+   * Fallback lead classification if triage is not called directly
+   */
+  async analyzeInboundLead(messageText: string): Promise<JevLeadAnalysis | null> {
+    const triage = await this.triageInboundMessage(messageText);
+    return triage ? triage.leadAnalysis : null;
   }
 }
 

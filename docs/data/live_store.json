@@ -4694,5 +4694,43 @@
         "cluster": "SOUTH_MUMBAI_FORT"
       }
     ]
-  }
+  },
+  "reviewSettings": {
+    "googleReviewUrl": "https://g.page/r/khaki-tours/review",
+    "automationMode": "AUTO_PILOT_2H",
+    "enabled": true,
+    "minRatingThreshold": 4
+  },
+  "reviewQueues": [
+    {
+      "id": "queue_dep_8901",
+      "departure_id": "dep_8901",
+      "tour_title": "#FortWalk: Colonial Heritage",
+      "guide_name": "Aniket (Historian Fellow)",
+      "completed_at": "2026-10-09T09:01:16.771Z",
+      "scheduled_dispatch_at": "2026-10-09T11:01:16.771Z",
+      "status": "SCHEDULED",
+      "recipients_count": 8,
+      "recipients": [
+        {
+          "guest_id": "bkg_8901_g_1",
+          "name": "Karan Mehra",
+          "phone": "+91 98200 88712",
+          "eligible": true
+        },
+        {
+          "guest_id": "bkg_8901_g_2",
+          "name": "Pooja Mehra",
+          "phone": "+91 98200 88713",
+          "eligible": true
+        },
+        {
+          "guest_id": "seed_dep_8901_2",
+          "name": "Vikram Patel",
+          "phone": "+91 98200 44551",
+          "eligible": true
+        }
+      ]
+    }
+  ]
 }

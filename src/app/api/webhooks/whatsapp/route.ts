@@ -121,19 +121,20 @@ export async function POST(req: NextRequest) {
               });
             }
 
-            // Run TypeSafe Jev AI Intelligence to classify corporate intent & urgency
-            let jevResult: any = null;
+            // Run TypeSafe Jev AI Intelligence for triage routing & lead scoring
+            let jevTriage: any = null;
             let priorityTier = 'P3_STANDARD';
             let slaMinutes = 60;
             let isCorporate = false;
 
             try {
-              jevResult = await jevClient.analyzeInboundLead(messageText);
-              if (jevResult.isCorporate || (jevResult.corporateProbability && jevResult.corporateProbability > 0.7)) {
+              jevTriage = await jevClient.triageInboundMessage(messageText);
+              const lead = jevTriage?.leadAnalysis;
+              if (lead?.isCorporate || (lead?.corporateProbability && lead.corporateProbability > 0.7)) {
                 priorityTier = 'P1_CRITICAL_CORPORATE';
                 slaMinutes = 15;
                 isCorporate = true;
-              } else if (jevResult.urgency === 'THIS_WEEKEND' || jevResult.urgency === 'TODAY_URGENT') {
+              } else if (lead?.urgency === 'THIS_WEEKEND' || lead?.urgency === 'TODAY_URGENT') {
                 priorityTier = 'P2_HIGH_URGENT';
                 slaMinutes = 30;
               }
@@ -194,27 +195,33 @@ export async function POST(req: NextRequest) {
               let replyText = '';
               let isTakeoverRequested = false;
 
-              // 1. Primary: Query Google Gemini AI Concierge
-              try {
-                console.log(`[Invoking Gemini Concierge for ${senderPhone}] Message: "${messageText}"`);
-                const geminiResult = await queryGeminiConcierge({
-                  senderPhone,
-                  guestName,
-                  messageText,
-                });
-                replyText = geminiResult.replyText;
-                isTakeoverRequested = geminiResult.isHumanTakeoverRequested;
-              } catch (geminiErr) {
-                console.warn('[Gemini Concierge Fallback]:', geminiErr);
-                // 2. Fallback to local catalog matcher
-                const fallbackResult = generateConciergeReply({
-                  senderPhone,
-                  guestName,
-                  messageText,
-                  isCorporate,
-                });
-                replyText = fallbackResult.replyText;
-                isTakeoverRequested = Boolean(fallbackResult.shouldMuteBot);
+              // 1. FAST PATH: Check if Jev Triage already resolved an instant local reply (Policy FAQs, Corporate VIP ack)
+              if (jevTriage?.routedTo === 'LOCAL_FAST_PATH' && jevTriage?.replyText) {
+                console.log(`[Jev Fast-Path Hit for ${senderPhone}] Category: ${jevTriage.category} - Bypassing LLM.`);
+                replyText = jevTriage.replyText;
+              } else {
+                // 2. Primary: Query Google Gemini AI Concierge for rich conversational & heritage queries
+                try {
+                  console.log(`[Invoking Gemini Concierge for ${senderPhone}] Message: "${messageText}"`);
+                  const geminiResult = await queryGeminiConcierge({
+                    senderPhone,
+                    guestName,
+                    messageText,
+                  });
+                  replyText = geminiResult.replyText;
+                  isTakeoverRequested = geminiResult.isHumanTakeoverRequested;
+                } catch (geminiErr) {
+                  console.warn('[Gemini Concierge Fallback]:', geminiErr);
+                  // 3. Graceful Fallback: Local catalog matcher
+                  const fallbackResult = generateConciergeReply({
+                    senderPhone,
+                    guestName,
+                    messageText,
+                    isCorporate: isCorporate || Boolean(jevTriage?.leadAnalysis?.isCorporate),
+                  });
+                  replyText = fallbackResult.replyText;
+                  isTakeoverRequested = Boolean(fallbackResult.shouldMuteBot);
+                }
               }
 
               if (isTakeoverRequested) {
