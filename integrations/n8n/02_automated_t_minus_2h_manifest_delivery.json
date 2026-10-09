@@ -1,0 +1,84 @@
+{
+  "name": "Khaki OS: Automated T-Minus 2h Guide Briefing Delivery",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Every 15 Minutes Poller",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.KHAKI_OS_API_URL }}/api/agent-query/departures/imminent?window_minutes=120",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $env.KHAKI_OS_INTERNAL_KEY }}"
+            }
+          ]
+        }
+      },
+      "id": "fetch-imminent-tours",
+      "name": "Fetch Tours Starting in 2 Hours",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "departures",
+        "options": {}
+      },
+      "id": "split-departures",
+      "name": "Iterate Imminent Departures",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 2.1,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v20.0/{{ $env.WHATSAPP_PHONE_NUMBER_ID }}/messages",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $json.guide_whatsapp }}\",\n  \"type\": \"interactive\",\n  \"interactive\": {\n    \"type\": \"button\",\n    \"header\": {\n      \"type\": \"text\",\n      \"text\": \"📋 KHAKI TOURS GUIDE BRIEFING (T-2H)\"\n    },\n    \"body\": {\n      \"text\": \"Hello {{ $json.guide_name }}!\\n\\nHere is your official briefing for today's walk:\\n\\n🏛️ *Tour:* {{ $json.tour_title }}\\n⏰ *Departure:* {{ $json.start_time }} (Report by {{ $json.report_time }})\\n📍 *Meeting Point:* {{ $json.meeting_point }}\\n🗺️ *Google Maps:* {{ $json.meeting_coordinates_url }}\\n\\n👥 *Confirmed Guests:* {{ $json.pax_count }} Pax\\n• KYC Verified: {{ $json.kyc_verified_count }}/{{ $json.pax_count }}\\n• Dietary Alerts: {{ $json.dietary_notes || 'None reported' }}\\n• Special Requests: {{ $json.special_requests || 'Standard pace' }}\\n\\n📞 *Ops Desk Backup (Priya):* +91 98200 11002\\n\\nTap below once you arrive on site:\"\n    },\n    \"footer\": { \"text\": \"Khaki Tours Operations Hub | Zero-Login Guide Flow\" },\n    \"action\": {\n      \"buttons\": [\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"GUIDE_CHECKIN_{{ $json.departure_id }}\",\n            \"title\": \"✅ Checked-in On Site\"\n          }\n        },\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"GUIDE_ISSUE_{{ $json.departure_id }}\",\n            \"title\": \"⚠️ Report Delay / Issue\"\n          }\n        }\n      ]\n    }\n  }\n}"
+      },
+      "id": "send-guide-briefing-whatsapp",
+      "name": "Send WhatsApp Interactive Briefing",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Every 15 Minutes Poller": {
+      "main": [
+        [{ "node": "Fetch Tours Starting in 2 Hours", "type": "main", "index": 0 }]
+      ]
+    },
+    "Fetch Tours Starting in 2 Hours": {
+      "main": [
+        [{ "node": "Iterate Imminent Departures", "type": "main", "index": 0 }]
+      ]
+    },
+    "Iterate Imminent Departures": {
+      "main": [
+        [{ "node": "Send WhatsApp Interactive Briefing", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}

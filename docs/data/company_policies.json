@@ -1,0 +1,63 @@
+{
+  "company_name": "Khaki Tours Private Limited",
+  "foundation_name": "Khaki Heritage Foundation (KHF - Section 8 Not-For-Profit)",
+  "mission": "#HeritageEvangelism: To create awareness about Mumbai's tangible and intangible heritage amongst citizens and tourists.",
+  "contact_info": {
+    "phone": "+91-8828100111",
+    "email": "hi@khakitours.com",
+    "whatsapp": "+91-8828100111",
+    "office_address": "310, Hari Chambers, 3rd Floor, 58/64, Shahid Bhagat Singh Rd, above Copper Chimney, Fort, Mumbai, Maharashtra 400001",
+    "registered_address_khf": "802 Aster, Dosti Acres, Wadala East, Mumbai – 400037",
+    "website": "https://khakitours.com"
+  },
+  "advance_payment_policy": {
+    "rule": "100% advance payment is strictly mandatory before commencement of any tour.",
+    "confirmation": "Tour bookings are only confirmed upon verified receipt of payment in full.",
+    "accepted_methods": [
+      "UPI",
+      "Credit Card",
+      "Debit Card",
+      "Net Banking",
+      "NEFT/RTGS for Corporate Groups"
+    ]
+  },
+  "cancellation_and_refund_policy": {
+    "standard_tours": {
+      "greater_than_72_hours": {
+        "refund_percentage": 50,
+        "deduction_percentage": 50,
+        "condition": "Cancellation initiated >72 hours before scheduled tour commencement time."
+      },
+      "less_than_72_hours": {
+        "refund_percentage": 0,
+        "deduction_percentage": 100,
+        "condition": "Cancellation initiated <72 hours before scheduled tour commencement. Strictly no refund."
+      },
+      "refund_disbursement_window": "Refunds processed within 30 days of cancellation approval."
+    },
+    "force_majeure_policy": {
+      "description": "In the event of cancellation due to circumstances beyond company control (natural disasters, floods, civil unrest, strikes, government orders), decisions are at company sole discretion. Direct third-party vehicle and logistical costs incurred are deducted."
+    },
+    "company_initiated_cancellation": {
+      "rule": "If Khaki Tours cancels a tour for operational reasons, guests receive a 100% full refund."
+    },
+    "outbound_international_tours": {
+      "rule": "Subject to custom milestone cancellation schedules detailed in specific expedition brochures."
+    }
+  },
+  "monsoon_and_weather_rules": {
+    "rain_policy": "Walks operate rain or shine during Mumbai monsoons unless a Red Alert is officially declared by BMC/IMD.",
+    "gear_recommendations": "Guests are advised to bring umbrellas/rainwear, wear water-resistant footwear with good grip, and keep electronic devices in waterproof pouches."
+  },
+  "dress_code_and_guest_etiquette": {
+    "arrival_time": "Guests must arrive at the designated meeting point at least 15 minutes prior to the scheduled start time.",
+    "late_arrival": "In case of delay, the group cannot wait indefinitely; guests must catch up with the host along the route.",
+    "clothing": "Modest, comfortable cotton clothing. When visiting active religious places (temples, agiaries, mosques, churches), knees and shoulders must be covered. Footwear removal required at shrine entrances.",
+    "footwear": "Comfortable closed walking shoes or supportive sandals.",
+    "hydration": "Guests must carry their own refillable water bottles."
+  },
+  "gst_and_taxation_rules": {
+    "b2c_tours": "5% Composite GST for Tour Operator Services under SAC Code 998555 (No Input Tax Credit).",
+    "b2b_corporate": "18% GST with formal GSTIN invoice and Input Tax Credit entitlement."
+  }
+}

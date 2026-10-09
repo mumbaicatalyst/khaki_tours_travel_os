@@ -1,0 +1,882 @@
+[
+  {
+    "id": "guide_001",
+    "name": "Bharat Gothoskar",
+    "role": "Founder & CEO, Chief Heritage Evangelist",
+    "title": "Ambassador of Mumbai",
+    "background": "Mechanical Engineer, MBA with 16 years corporate marketing experience (Godrej, Pidilite, Mahindra). Founded Khaki Tours in 2015 & Khaki Heritage Foundation in 2018. Creator of world's first #UrbanSafari.",
+    "specializations": [
+      "Fort Colonial History",
+      "Parel Textile Mills",
+      "Gamdevi & Native Town",
+      "Waterworks & Architecture",
+      "Maritime & Naval"
+    ],
+    "languages": [
+      "English",
+      "Marathi",
+      "Hindi",
+      "Gujarati"
+    ],
+    "rating": 4.99,
+    "contact_phone": "+91 98200 11001",
+    "photo_url": "https://khakitours.com/wp-content/uploads/2026/02/Website-Walk-Face-photo-2.png",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP",
+      "CORPORATE_B2B",
+      "INTERNATIONAL_EXPEDITION"
+    ]
+  },
+  {
+    "id": "guide_002",
+    "name": "Aniket",
+    "role": "Ambassador of Mumbai",
+    "title": "Bombay High Court Lawyer & Legal Historian",
+    "background": "Originally from Pune; fell in love with Mumbai through a Khaki walk and now guides guests through legal lore, High Court precincts, and colonial administrative history.",
+    "specializations": [
+      "Legal Heritage",
+      "Colonial Institutions",
+      "Castle to Gateway",
+      "Fort Walk"
+    ],
+    "languages": [
+      "English",
+      "Marathi",
+      "Hindi"
+    ],
+    "rating": 4.96,
+    "contact_phone": "+91 98200 11992",
+    "photo_url": "https://khakitours.com/wp-content/uploads/2026/08/Website-Walk-Face-photo.png",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_003",
+    "name": "Anvi",
+    "role": "Ambassador of Mumbai",
+    "title": "Spanish Language Expert & Cultural Interpreter",
+    "background": "Former Rotary Youth Ambassador in the US. Returned to Mumbai after global travel to interpret the city's living stories for international guests.",
+    "specializations": [
+      "Multicultural Mumbai",
+      "South Mumbai Art Deco",
+      "Faith Walk",
+      "Bandra Walk"
+    ],
+    "languages": [
+      "English",
+      "Spanish",
+      "Hindi",
+      "Gujarati"
+    ],
+    "rating": 4.95,
+    "contact_phone": "+91 98201 22334",
+    "photo_url": "https://khakitours.com/wp-content/uploads/2026/04/Website-Walk-Face-photo-1.png",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP",
+      "INTERNATIONAL_EXPEDITION"
+    ]
+  },
+  {
+    "id": "guide_004",
+    "name": "Preeti",
+    "role": "Ambassador of Mumbai",
+    "title": "Anaesthetist & Heritage Volunteer",
+    "background": "Medical doctor who enlivens visitors on weekends with vibrant cultural history, medical heritage of Bombay, and plague history anecdotes.",
+    "specializations": [
+      "Grisly Girgaon",
+      "Plague Epidemics History",
+      "Gamdevi & Opera House",
+      "Banganga Walk"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Marathi"
+    ],
+    "rating": 4.94,
+    "contact_phone": "+91 98202 33445",
+    "photo_url": "https://khakitours.com/wp-content/uploads/2026/04/Website-Walk-Face-photo-2.png",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_005",
+    "name": "Samruddhi",
+    "role": "Ambassador of Mumbai",
+    "title": "Banking Professional & Financial Historian",
+    "background": "Weekday banker, weekend historian who uncovers Mumbai’s financial evolution, Bombay Stock Exchange lore, and mint architecture.",
+    "specializations": [
+      "Horniman Circle",
+      "BSE & Mint Lore",
+      "Fort Walk",
+      "Ye Olde Bombay"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Marathi"
+    ],
+    "rating": 4.93,
+    "contact_phone": "+91 98203 44556",
+    "photo_url": "https://khakitours.com/wp-content/uploads/2026/04/Website-Walk-Face-photo-3.png",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP",
+      "CORPORATE_B2B"
+    ]
+  },
+  {
+    "id": "guide_006",
+    "name": "Aanchal",
+    "role": "Ambassador of Mumbai",
+    "title": "Communications Professional & Classical Dancer",
+    "background": "Classical Indian dancer and brand communications expert who brings Mumbai's rhythmic cultural stories and temple performance arts alive.",
+    "specializations": [
+      "Sacred Banganga",
+      "Temple Trails",
+      "Handmade in India",
+      "Arts & Culture"
+    ],
+    "languages": [
+      "English",
+      "Hindi"
+    ],
+    "rating": 4.92,
+    "contact_phone": "+91 98204 55667",
+    "photo_url": "https://khakitours.com/wp-content/uploads/2026/07/Walk-Face-Photo.png",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_007",
+    "name": "Adithi",
+    "role": "Ambassador of Mumbai",
+    "title": "MBA Researcher & Suburban Storyteller",
+    "background": "Storyteller who guides guests through Bollywood lore, historic suburban gaothans, and vibrant street life.",
+    "specializations": [
+      "Bandra Walk",
+      "Bandra 4 Kids",
+      "Film History",
+      "Bygone Bandra"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Tamil"
+    ],
+    "rating": 4.91,
+    "contact_phone": "+91 98205 66778",
+    "photo_url": "https://khakitours.com/wp-content/uploads/2026/02/Walk-Face-photo.png",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_008",
+    "name": "Aditi",
+    "role": "Ambassador of Mumbai",
+    "title": "Education Researcher",
+    "background": "Returned to Mumbai after 11 years to unearth hidden architectural secrets, colonial schooling foundations, and library heritage with residents and visitors.",
+    "specializations": [
+      "Flora Fountain",
+      "Fort 4 Kids",
+      "Colonial Education",
+      "South Mumbai Ensembles"
+    ],
+    "languages": [
+      "English",
+      "Hindi"
+    ],
+    "rating": 4.93,
+    "contact_phone": "+91 98206 77889",
+    "photo_url": "https://khakitours.com/wp-content/uploads/2026/01/Website-Walk-Face-photo.png",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_009",
+    "name": "Aditya",
+    "role": "Ambassador of Mumbai",
+    "title": "Supply Chain Transformation Executive",
+    "background": "Weekend history buff sharing tales of Mumbai’s sea trade, cotton booms, dockyards, and colonial economic expansion.",
+    "specializations": [
+      "Bazar Walk",
+      "Cotton Green & Docks",
+      "Bombay Bazars",
+      "Crawford Market"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Bengali"
+    ],
+    "rating": 4.92,
+    "contact_phone": "+91 98207 88990",
+    "photo_url": "https://khakitours.com/wp-content/uploads/2025/11/khaki-team.png",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP",
+      "CORPORATE_B2B"
+    ]
+  },
+  {
+    "id": "guide_010",
+    "name": "Ajay",
+    "role": "Ambassador of Mumbai",
+    "title": "Venture Capital Investor",
+    "background": "Discovered Mumbai’s heritage by chance; now invests his weekends sharing heritage stories, architectural preservation, and urban safari trails.",
+    "specializations": [
+      "Shimmering City",
+      "Urban Safari",
+      "Fort by Night",
+      "Art Deco Ensembles"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Gujarati"
+    ],
+    "rating": 4.94,
+    "contact_phone": "+91 98208 99001",
+    "photo_url": "https://khakitours.com/wp-content/uploads/2025/11/khaki-team.png",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_011",
+    "name": "Sagar Joshi",
+    "role": "Ambassador of Mumbai",
+    "title": "Senior Heritage Host & Civic Specialist",
+    "background": "Specialised in Municipal Corporation Building (BMC Headquarters - #UrbsPrima) and historic South Mumbai architectural walks.",
+    "specializations": [
+      "BMC Headquarters",
+      "Urbs Prima in Indis",
+      "Victoria Terminus / CSMT",
+      "Gothic Architecture"
+    ],
+    "languages": [
+      "English",
+      "Marathi",
+      "Hindi"
+    ],
+    "rating": 4.98,
+    "contact_phone": "+91 98209 11223",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_012",
+    "name": "Arun",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Host & Colonial Historian",
+    "background": "Renowned for BMC HQ, CSMT, and colonial history walks with high guest acclaim and deep archival knowledge.",
+    "specializations": [
+      "BMC Headquarters",
+      "Colonial History",
+      "Horniman Circle",
+      "Ballard Estate"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Tamil"
+    ],
+    "rating": 4.97,
+    "contact_phone": "+91 98210 22334",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_013",
+    "name": "Rohan Kulkarni",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Parel, Lalbaug & Mill Heartland)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Parel, Lalbaug & Mill Heartland micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Girangaon Mills",
+      "Chawl Life",
+      "Lalbaug Heritage",
+      "Textile Trails"
+    ],
+    "languages": [
+      "English",
+      "Marathi",
+      "Hindi"
+    ],
+    "rating": 4.98,
+    "contact_phone": "+91 98213 11443",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_014",
+    "name": "Tanvi Deshmukh",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Docklands, Mazgaon & Maritime)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Docklands, Mazgaon & Maritime micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Sassoon Docks",
+      "Mazgaon Hill",
+      "Naval History",
+      "Armenian Trails"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Urdu"
+    ],
+    "rating": 4.99,
+    "contact_phone": "+91 98214 11554",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_015",
+    "name": "Farhan Merchant",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Art Deco Ensembles & Marine Drive)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Art Deco Ensembles & Marine Drive micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Bombay Deco",
+      "Oval Maidan",
+      "Marine Drive Nights",
+      "Shimmering City"
+    ],
+    "languages": [
+      "English",
+      "Hindi"
+    ],
+    "rating": 4.85,
+    "contact_phone": "+91 98215 11665",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_016",
+    "name": "Zubin Contractor",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Food Trails & Culinary Diaspora)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Food Trails & Culinary Diaspora micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Mohalla Munch",
+      "Irani Chai",
+      "Bohri Mohalla",
+      "Chowpatty Chat"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Gujarati",
+      "Urdu"
+    ],
+    "rating": 4.86,
+    "contact_phone": "+91 98216 11776",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_017",
+    "name": "Meera Iyer",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Fort & Colonial Precinct)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Fort & Colonial Precinct micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Fort Walk",
+      "High Court",
+      "Castle to Gateway",
+      "Ye Olde Bombay"
+    ],
+    "languages": [
+      "English",
+      "Marathi",
+      "Hindi"
+    ],
+    "rating": 4.87,
+    "contact_phone": "+91 98217 11887",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_018",
+    "name": "Nikhil Salunkhe",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Bandra, Khar & Salsette Villages)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Bandra, Khar & Salsette Villages micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Bygone Bandra",
+      "Vibrant Bandra",
+      "Bandra 4 Kids",
+      "Ranwar Heritage"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Marathi"
+    ],
+    "rating": 4.88,
+    "contact_phone": "+91 98218 11998",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_019",
+    "name": "Sneha Varma",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Native Town, Bhuleshwar & Bazaars)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Native Town, Bhuleshwar & Bazaars micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Bombay Bazars",
+      "Bazar Walk",
+      "Spice Alleys",
+      "Temple Trails"
+    ],
+    "languages": [
+      "English",
+      "Gujarati",
+      "Hindi"
+    ],
+    "rating": 4.89,
+    "contact_phone": "+91 98219 12109",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_020",
+    "name": "Darius Batlivala",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Girgaon, Chowpatty & Malabar Hill)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Girgaon, Chowpatty & Malabar Hill micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Grisly Girgaon",
+      "Sacred Banganga",
+      "Walkeshwar",
+      "Gamdevi Pioneers"
+    ],
+    "languages": [
+      "English",
+      "Marathi",
+      "Hindi"
+    ],
+    "rating": 4.9,
+    "contact_phone": "+91 98220 12220",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_021",
+    "name": "Kavita Nair",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Parel, Lalbaug & Mill Heartland)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Parel, Lalbaug & Mill Heartland micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Girangaon Mills",
+      "Chawl Life",
+      "Lalbaug Heritage",
+      "Textile Trails"
+    ],
+    "languages": [
+      "English",
+      "Marathi",
+      "Hindi"
+    ],
+    "rating": 4.91,
+    "contact_phone": "+91 98221 12331",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_022",
+    "name": "Prashant Sawant",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Docklands, Mazgaon & Maritime)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Docklands, Mazgaon & Maritime micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Sassoon Docks",
+      "Mazgaon Hill",
+      "Naval History",
+      "Armenian Trails"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Urdu"
+    ],
+    "rating": 4.92,
+    "contact_phone": "+91 98222 12442",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_023",
+    "name": "Zehra Bohra",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Art Deco Ensembles & Marine Drive)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Art Deco Ensembles & Marine Drive micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Bombay Deco",
+      "Oval Maidan",
+      "Marine Drive Nights",
+      "Shimmering City"
+    ],
+    "languages": [
+      "English",
+      "Hindi"
+    ],
+    "rating": 4.93,
+    "contact_phone": "+91 98223 12553",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_024",
+    "name": "Gautam Chidambaram",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Food Trails & Culinary Diaspora)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Food Trails & Culinary Diaspora micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Mohalla Munch",
+      "Irani Chai",
+      "Bohri Mohalla",
+      "Chowpatty Chat"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Gujarati",
+      "Urdu"
+    ],
+    "rating": 4.94,
+    "contact_phone": "+91 98224 12664",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_025",
+    "name": "Radhika Kamath",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Fort & Colonial Precinct)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Fort & Colonial Precinct micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Fort Walk",
+      "High Court",
+      "Castle to Gateway",
+      "Ye Olde Bombay"
+    ],
+    "languages": [
+      "English",
+      "Marathi",
+      "Hindi"
+    ],
+    "rating": 4.95,
+    "contact_phone": "+91 98225 12775",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_026",
+    "name": "Karan Parekh",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Bandra, Khar & Salsette Villages)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Bandra, Khar & Salsette Villages micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Bygone Bandra",
+      "Vibrant Bandra",
+      "Bandra 4 Kids",
+      "Ranwar Heritage"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Marathi"
+    ],
+    "rating": 4.96,
+    "contact_phone": "+91 98226 12886",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_027",
+    "name": "Sunil Gaikwad",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Native Town, Bhuleshwar & Bazaars)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Native Town, Bhuleshwar & Bazaars micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Bombay Bazars",
+      "Bazar Walk",
+      "Spice Alleys",
+      "Temple Trails"
+    ],
+    "languages": [
+      "English",
+      "Gujarati",
+      "Hindi"
+    ],
+    "rating": 4.97,
+    "contact_phone": "+91 98227 12997",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_028",
+    "name": "Deepa Subramanian",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Girgaon, Chowpatty & Malabar Hill)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Girgaon, Chowpatty & Malabar Hill micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Grisly Girgaon",
+      "Sacred Banganga",
+      "Walkeshwar",
+      "Gamdevi Pioneers"
+    ],
+    "languages": [
+      "English",
+      "Marathi",
+      "Hindi"
+    ],
+    "rating": 4.98,
+    "contact_phone": "+91 98228 13108",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_029",
+    "name": "Hormuzd Pardiwalla",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Parel, Lalbaug & Mill Heartland)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Parel, Lalbaug & Mill Heartland micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Girangaon Mills",
+      "Chawl Life",
+      "Lalbaug Heritage",
+      "Textile Trails"
+    ],
+    "languages": [
+      "English",
+      "Marathi",
+      "Hindi"
+    ],
+    "rating": 4.99,
+    "contact_phone": "+91 98229 13219",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_030",
+    "name": "Vinay Tambe",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Docklands, Mazgaon & Maritime)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Docklands, Mazgaon & Maritime micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Sassoon Docks",
+      "Mazgaon Hill",
+      "Naval History",
+      "Armenian Trails"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Urdu"
+    ],
+    "rating": 4.85,
+    "contact_phone": "+91 98230 13330",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_031",
+    "name": "Shweta Karkaria",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Art Deco Ensembles & Marine Drive)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Art Deco Ensembles & Marine Drive micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Bombay Deco",
+      "Oval Maidan",
+      "Marine Drive Nights",
+      "Shimmering City"
+    ],
+    "languages": [
+      "English",
+      "Hindi"
+    ],
+    "rating": 4.86,
+    "contact_phone": "+91 98231 13441",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_032",
+    "name": "Milind Chitnis",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Food Trails & Culinary Diaspora)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Food Trails & Culinary Diaspora micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Mohalla Munch",
+      "Irani Chai",
+      "Bohri Mohalla",
+      "Chowpatty Chat"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Gujarati",
+      "Urdu"
+    ],
+    "rating": 4.87,
+    "contact_phone": "+91 98232 13552",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_033",
+    "name": "Bhavna Shah",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Fort & Colonial Precinct)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Fort & Colonial Precinct micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Fort Walk",
+      "High Court",
+      "Castle to Gateway",
+      "Ye Olde Bombay"
+    ],
+    "languages": [
+      "English",
+      "Marathi",
+      "Hindi"
+    ],
+    "rating": 4.88,
+    "contact_phone": "+91 98233 13663",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_034",
+    "name": "Abhishek Rane",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Bandra, Khar & Salsette Villages)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Bandra, Khar & Salsette Villages micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Bygone Bandra",
+      "Vibrant Bandra",
+      "Bandra 4 Kids",
+      "Ranwar Heritage"
+    ],
+    "languages": [
+      "English",
+      "Hindi",
+      "Marathi"
+    ],
+    "rating": 4.89,
+    "contact_phone": "+91 98234 13774",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_035",
+    "name": "Natasha Dsouza",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Native Town, Bhuleshwar & Bazaars)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Native Town, Bhuleshwar & Bazaars micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Bombay Bazars",
+      "Bazar Walk",
+      "Spice Alleys",
+      "Temple Trails"
+    ],
+    "languages": [
+      "English",
+      "Gujarati",
+      "Hindi"
+    ],
+    "rating": 4.9,
+    "contact_phone": "+91 98235 13885",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  },
+  {
+    "id": "guide_036",
+    "name": "Varun Gore",
+    "role": "Ambassador of Mumbai",
+    "title": "Heritage Guide (Girgaon, Chowpatty & Malabar Hill)",
+    "background": "Passionate resident historian and volunteer Ambassador specializing in Girgaon, Chowpatty & Malabar Hill micro-histories, architecture, and community heritage.",
+    "specializations": [
+      "Grisly Girgaon",
+      "Sacred Banganga",
+      "Walkeshwar",
+      "Gamdevi Pioneers"
+    ],
+    "languages": [
+      "English",
+      "Marathi",
+      "Hindi"
+    ],
+    "rating": 4.91,
+    "contact_phone": "+91 98236 13996",
+    "assigned_categories": [
+      "STANDARD_WALK",
+      "PRIVATE_GROUP"
+    ]
+  }
+]

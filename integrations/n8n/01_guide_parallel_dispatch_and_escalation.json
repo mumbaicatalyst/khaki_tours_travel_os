@@ -1,0 +1,153 @@
+{
+  "name": "Khaki OS: Guide Parallel Dispatch & 30m Escalation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "khaki-guide-dispatch",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Khaki OS Dispatch Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"DISPATCH_QUEUED\",\n  \"broadcast_id\": \"{{ $json.body.dispatch_id }}\",\n  \"targets\": {{ $json.body.target_phones.length }},\n  \"timeout_seconds\": 1800\n}"
+      },
+      "id": "ack-response",
+      "name": "Respond Ack to Khaki OS",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [440, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v20.0/{{ $env.WHATSAPP_PHONE_NUMBER_ID }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.META_CLOUD_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"recipient_type\": \"individual\",\n  \"to\": \"{{ $json.phone }}\",\n  \"type\": \"interactive\",\n  \"interactive\": {\n    \"type\": \"button\",\n    \"header\": { \"type\": \"text\", \"text\": \"🏛️ Khaki Tours: Tour Opportunity\" },\n    \"body\": {\n      \"text\": \"Hello! New assignment opportunity:\\n\\n• *Tour:* {{ $('Khaki OS Dispatch Trigger').item.json.body.tour_title }}\\n• *Slot:* {{ $('Khaki OS Dispatch Trigger').item.json.body.departure_date }}\\n• *Pax:* {{ $('Khaki OS Dispatch Trigger').item.json.body.group_size }} Guests\\n• *Payout:* ₹{{ $('Khaki OS Dispatch Trigger').item.json.body.payout_amount_inr }}\\n\\n*Zero-portal interaction: Simply tap your response below within 30 minutes.*\"\n    },\n    \"footer\": { \"text\": \"Khaki Operations Hub | Zero-Login Ambassador Network\" },\n    \"action\": {\n      \"buttons\": [\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"DISPATCH_ACCEPT_{{ $('Khaki OS Dispatch Trigger').item.json.body.dispatch_id }}\",\n            \"title\": \"✅ Accept Tour\"\n          }\n        },\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"DISPATCH_DECLINE_{{ $('Khaki OS Dispatch Trigger').item.json.body.dispatch_id }}\",\n            \"title\": \"❌ Busy / Pass\"\n          }\n        }\n      ]\n    }\n  }\n}"
+      },
+      "id": "send-whatsapp-buttons",
+      "name": "Broadcast WhatsApp Buttons to Guides",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "minutes"
+      },
+      "id": "wait-30m",
+      "name": "Wait 30 Minutes for Responses",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.KHAKI_OS_API_URL }}/api/dispatch/{{ $('Khaki OS Dispatch Trigger').item.json.body.dispatch_id }}/status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $env.KHAKI_OS_INTERNAL_KEY }}"
+            }
+          ]
+        }
+      },
+      "id": "check-claim-status",
+      "name": "Check if Claimed in Khaki OS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.status }}",
+              "value2": "ACCEPTED"
+            }
+          ]
+        }
+      },
+      "id": "if-accepted",
+      "name": "Is Tour Claimed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v20.0/{{ $env.WHATSAPP_PHONE_NUMBER_ID }}/messages",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $env.PRIYA_OPS_PHONE }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"🚨 *KHAKI OPS ESCALATION ALERT*\\n\\nTour: {{ $('Khaki OS Dispatch Trigger').item.json.body.tour_title }}\\nDate: {{ $('Khaki OS Dispatch Trigger').item.json.body.departure_date }}\\n\\n⚠️ *Zero guide responses after 30-minute broadcast.*\\nPlease manually assign or call reserve ambassadors from the Khaki Travel OS dispatch board:\\n👉 {{ $env.KHAKI_OS_APP_URL }}/dispatch\"\n  }\n}"
+      },
+      "id": "escalate-to-priya",
+      "name": "Escalate to Priya (WhatsApp Alert)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1600, 420]
+    }
+  ],
+  "connections": {
+    "Khaki OS Dispatch Trigger": {
+      "main": [
+        [
+          { "node": "Respond Ack to Khaki OS", "type": "main", "index": 0 },
+          { "node": "Broadcast WhatsApp Buttons to Guides", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Broadcast WhatsApp Buttons to Guides": {
+      "main": [
+        [{ "node": "Wait 30 Minutes for Responses", "type": "main", "index": 0 }]
+      ]
+    },
+    "Wait 30 Minutes for Responses": {
+      "main": [
+        [{ "node": "Check if Claimed in Khaki OS", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check if Claimed in Khaki OS": {
+      "main": [
+        [{ "node": "Is Tour Claimed?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Is Tour Claimed?": {
+      "main": [
+        [],
+        [{ "node": "Escalate to Priya (WhatsApp Alert)", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}

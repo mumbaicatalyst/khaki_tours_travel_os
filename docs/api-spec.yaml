@@ -1,0 +1,360 @@
+openapi: 3.0.3
+info:
+  title: Khaki Travel Operating System API
+  version: 1.0.0
+  description: >
+    Production API specification for Khaki Tours Travel OS (CRM + ERP + Omnichannel Hub).
+    Covers WhatsApp Webhooks, Voice AI Opt-in Handoff, Resource Dispatch, Dynamic Forex, and Tally Prime Voucher Generation.
+servers:
+  - url: https://os.khakitours.com/api
+    description: Production Cluster
+  - url: http://localhost:3000/api
+    description: Local Development Server
+
+paths:
+  /whatsapp:
+    get:
+      summary: Meta WhatsApp Webhook Verification
+      description: Verifies webhook subscription challenge from Meta Graph API / Wati BSP.
+      parameters:
+        - name: hub.mode
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: hub.challenge
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: hub.verify_token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Verification challenge string returned
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: Invalid verification token
+
+    post:
+      summary: Meta / Wati Inbound Webhook Handler
+      description: Ingests inbound guest messages, interactive button callbacks, and delivery receipts.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WhatsAppWebhookPayload'
+      responses:
+        '200':
+          description: Webhook acknowledged successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+
+  /voice:
+    post:
+      summary: Voice AI Opt-in & Qualification Handoff
+      description: >
+        Called by Voice AI (Vapi / Bland / Twilio) when a caller verbally approves receiving
+        tour details and payment links on WhatsApp.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoiceHandoffRequest'
+      responses:
+        '200':
+          description: Opt-in registered and WhatsApp template dispatched
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  booking_id:
+                    type: string
+                    format: uuid
+                  whatsapp_message_id:
+                    type: string
+        '400':
+          description: Invalid payload or missing phone number
+
+  /dispatch:
+    post:
+      summary: Trigger Vendor & Guide WhatsApp Broadcast
+      description: Dispatches interactive booking request buttons to eligible guides or vendors.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DispatchTriggerRequest'
+      responses:
+        '201':
+          description: Dispatch broadcast initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dispatch_id:
+                    type: string
+                    format: uuid
+                  broadcast_sent_count:
+                    type: integer
+                  timeout_minutes:
+                    type: integer
+                    example: 30
+
+  /dispatch/{id}/respond:
+    post:
+      summary: Guide/Vendor Interactive Button Callback
+      description: Receives the [Accept] or [Decline] button payload from WhatsApp.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - response
+                - responder_phone
+              properties:
+                response:
+                  type: string
+                  enum: [ACCEPT, DECLINE]
+                responder_phone:
+                  type: string
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Dispatch state updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ACCEPTED
+                  locked:
+                    type: boolean
+                    example: true
+
+  /fx:
+    post:
+      summary: Dynamic Forex Rate & Price Quote Calculator
+      description: Calculates customer INR quote from USD base cost applying volatility buffer and target margin.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FxCalculationRequest'
+      responses:
+        '200':
+          description: Calculated quote and risk parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FxCalculationResponse'
+
+  /tally:
+    post:
+      summary: Generate Tally Prime XML / JSON Voucher
+      description: Emits Tally Prime Sales / Receipt Voucher with GST calculations for synchronization.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - booking_id
+              properties:
+                booking_id:
+                  type: string
+                  format: uuid
+                voucher_type:
+                  type: string
+                  enum: [RECEIPT, SALES]
+                  default: RECEIPT
+      responses:
+        '200':
+          description: Generated Tally XML and status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  synced:
+                    type: boolean
+                    example: true
+                  voucher_number:
+                    type: string
+                    example: "KT-REC-2026-0042"
+                  xml_payload:
+                    type: string
+
+components:
+  schemas:
+    WhatsAppWebhookPayload:
+      type: object
+      required:
+        - object
+        - entry
+      properties:
+        object:
+          type: string
+          example: whatsapp_business_account
+        entry:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              changes:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    value:
+                      type: object
+                      properties:
+                        messaging_product:
+                          type: string
+                        contacts:
+                          type: array
+                          items:
+                            type: object
+                        messages:
+                          type: array
+                          items:
+                            type: object
+
+    VoiceHandoffRequest:
+      type: object
+      required:
+        - caller_phone
+        - tour_id
+        - verbal_consent
+      properties:
+        caller_phone:
+          type: string
+          example: "+919820012345"
+        caller_name:
+          type: string
+          example: "Rohan Varma"
+        tour_id:
+          type: string
+          format: uuid
+        group_size:
+          type: integer
+          default: 2
+        call_id:
+          type: string
+        transcript_snippet:
+          type: string
+        verbal_consent:
+          type: boolean
+          example: true
+
+    DispatchTriggerRequest:
+      type: object
+      required:
+        - booking_id
+        - resource_type
+      properties:
+        booking_id:
+          type: string
+          format: uuid
+        resource_type:
+          type: string
+          enum: [GUIDE, JEEP, DMC]
+        target_phones:
+          type: array
+          items:
+            type: string
+        payout_amount_inr:
+          type: number
+          format: float
+        timeout_minutes:
+          type: integer
+          default: 30
+
+    FxCalculationRequest:
+      type: object
+      required:
+        - tour_id
+        - cost_usd
+      properties:
+        tour_id:
+          type: string
+          format: uuid
+        booking_id:
+          type: string
+          format: uuid
+        cost_usd:
+          type: number
+          example: 2200.00
+        spot_usd_inr:
+          type: number
+          example: 83.50
+        buffer_percentage:
+          type: number
+          default: 3.50
+        target_margin_percentage:
+          type: number
+          default: 22.00
+
+    FxCalculationResponse:
+      type: object
+      properties:
+        control_rate:
+          type: number
+          example: 86.4225
+        cost_floor_inr:
+          type: number
+          example: 190129.50
+        quoted_price_inr:
+          type: number
+          example: 244000.00
+        margin_inr:
+          type: number
+          example: 53870.50
+        milestones:
+          type: object
+          properties:
+            deposit_inr:
+              type: number
+              example: 61000.00
+            milestone_1_inr:
+              type: number
+              example: 85400.00
+            final_balance_inr:
+              type: number
+              example: 97600.00

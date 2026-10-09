@@ -1,0 +1,53 @@
+{
+  "name": "Khaki OS: Vendor Logistics Dispatch (Jeep & Boat Captains)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "khaki-vendor-dispatch",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "vendor-webhook-trigger",
+      "name": "Khaki OS Vendor Dispatch Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"VENDOR_DISPATCH_SENT\",\n  \"vendor_id\": \"{{ $json.body.vendor_id }}\",\n  \"channel\": \"{{ $json.body.preferred_channel || 'WHATSAPP_DIRECT' }}\"\n}"
+      },
+      "id": "vendor-ack",
+      "name": "Ack Khaki OS",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [440, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v20.0/{{ $env.WHATSAPP_PHONE_NUMBER_ID }}/messages",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $json.body.vendor_phone }}\",\n  \"type\": \"interactive\",\n  \"interactive\": {\n    \"type\": \"button\",\n    \"header\": {\n      \"type\": \"text\",\n      \"text\": \"🚙 KHAKI TOURS: VENDOR DISPATCH ORDER\"\n    },\n    \"body\": {\n      \"text\": \"Namaste {{ $json.body.vendor_name }}!\\n\\nVehicle dispatch request for Khaki Tours:\\n\\n• *Service:* {{ $json.body.service_name }}\\n• *Vehicle Required:* {{ $json.body.vehicle_number || 'Safari Open Jeep / Boat' }}\\n• *Date & Time:* {{ $json.body.scheduled_time }}\\n• *Pickup Landmark:* {{ $json.body.pickup_landmark }}\\n• *Guest Count:* {{ $json.body.pax_count }} Pax\\n• *Contract Rate:* ₹{{ $json.body.payout_inr }}\\n\\nPlease confirm your availability by tapping below:\"\n    },\n    \"footer\": { \"text\": \"Khaki Logistics Desk | Zero-Login Partner Dispatch\" },\n    \"action\": {\n      \"buttons\": [\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"VENDOR_CONFIRM_{{ $json.body.booking_ref }}_{{ $json.body.vendor_id }}\",\n            \"title\": \"✅ Vehicle Confirmed\"\n          }\n        },\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"VENDOR_UNAVAILABLE_{{ $json.body.booking_ref }}_{{ $json.body.vendor_id }}\",\n            \"title\": \"❌ Unavailable / In Workshop\"\n          }\n        }\n      ]\n    }\n  }\n}"
+      },
+      "id": "send-vendor-whatsapp",
+      "name": "Send Vendor WhatsApp Interactive Prompt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [660, 300]
+    }
+  ],
+  "connections": {
+    "Khaki OS Vendor Dispatch Trigger": {
+      "main": [
+        [
+          { "node": "Ack Khaki OS", "type": "main", "index": 0 },
+          { "node": "Send Vendor WhatsApp Interactive Prompt", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  }
+}

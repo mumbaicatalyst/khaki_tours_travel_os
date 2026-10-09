@@ -1,0 +1,193 @@
+Language: en (probability 1.00)
+
+[00.02–00.11] Okay, that's perfect because that's kind of what I am observing as well and opportunities that you know
+[00.11–00.20] I'm talking with a few of the businesses. I'm coming across very similar kind of things that everyone is trying to do
+[00.20–00.22] So that completely makes sense, right?
+[00.22–00.29] So if you I mean, I'm not sure how much time you have right now
+[00.29–00.37] But I'd listen up to ask some questions to sort of get at some of those things that you guys are trying to solve
+[00.37–00.38] All right
+[00.38–00.47] So I know Harat mentioned that you guys do a lot of your a lot of your processes a lot of the things that you guys
+[00.47–00.53] Run are run on Google Sheets today. Is that is that correct?
+[00.55–00.61] So is that I'm just trying to understand so even for example when you guys
+[00.63–00.68] Take in customer bookings that is captured through Google Sheets
+[00.69–00.79] To when you guys schedule your tours which guides are booked for specific tours
+[00.80–00.87] Scheduling those guides all of that walks through different Google Sheets. I'm just trying to get a sense of how it
+[00.88–00.99] Okay, what's up is the communication method right on terms of booking and scheduling with guides
+[00.99–01.08] Can you just walk me through Kevin sort of how you guys so, you know Pfizer mentioned
+[01.08–01.17] Obviously, she mentioned her specific angle from a how guide bookings work and see she was mentioned that you guys are looking at tools
+[01.17–01.27] Like spec or something else to calendar matches and all that kind of stuff, right? Just just walk me through
+[01.28–01.32] How a guide booking works?
+[01.49–01.83] We get leads from various sources
+[01.83–01.91] So the name shows us that
+[01.91–01.96] one sends a request from the website
+[01.96–02.13] Second is subset message
+[02.13–02.18] and fourth is
+[02.18–02.29] So there isn't even split the claim these four channels
+[02.29–02.35] I also have some
+[02.35–02.58] invisible compact tools
+[02.58–02.63] for
+[02.63–02.68] the website and inquiry on the
+[02.68–02.83] official email and inquiry on the official website
+[02.83–02.84] or through WhatsApp
+[02.84–02.87] Okay
+[02.87–02.95] We have only one
+[02.99–03.14] And is that is that is that set up through like a business service or maybe like a meta API or something
+[03.21–03.28] And I'm guessing it's manned by someone in your company
+[03.29–03.65] Got it. Got it. And is that someone that you know, for example, is that handled by let's say by you or someone else within
+[03.65–03.69] khaki or during business
+[03.85–04.16] Okay, and what what happens after hours for example, or let's say if they're busy if multiple calls are coming around the same time is it
+[04.52–04.56] Okay
+[04.68–04.82] Okay, do you feel Kevin that potentially you're losing leads that may not get their answers or may get out maybe to your competitor
+[05.06–05.09] Okay, that's that's definitely
+[05.21–05.32] Yep, yep. No that makes sense that makes complete sense and then so once it's let's say you guys capture the lead
+[05.32–05.38] Right the person comes they want to do a booking or let's say they don't even want to do okay
+[05.38–05.44] They just want to ask some questions about your tours. How do you capture that information?
+[06.05–06.11] Okay, and then and that I'm guessing is also handled by Priya Steve
+[06.18–06.23] Okay. Okay, and then and then so once you progress it later
+[06.23–06.33] Let's say the customer makes a booking either through your website or WhatsApp or a call someone takes in their payment information
+[06.33–06.37] Yeah, all of that gets captured somehow
+[06.37–06.46] Within those Google sheets and or process through it. I believe you guys use the laser pay from what I'm seeing on the website
+[06.48–06.55] Okay, and then how is the tour booked itself? So I'm trying to get an answer
+[06.55–06.64] So do you guys already have pre-scheduled tours where you just assign the slots to these people?
+[06.99–07.03] Okay, when when do you
+[07.49–07.52] A lot of
+[08.01–08.08] Right, right, right, right that makes sense. So Kevin had a couple of questions on this one
+[08.08–08.12] So that's potentially what Pfizer also raised
+[08.14–08.23] As maybe something that you guys are trying to solve for so when when this specialized booking comes do you guys?
+[08.25–08.32] Accept the booking and then go and find and scramble to get a guide
+[08.33–08.41] Sorted out or do you say hey hold on the booking? I'll find you a guide and then I'll tell you whether I can take your
+[08.41–08.45] So how does it sort of work?
+[08.75–09.16] Okay, okay, so and then that point is it just tell me if I'm wrong or not
+[09.16–09.24] But is it process where you are then having some to reach out to guys one by one?
+[09.24–09.34] Maybe either through WhatsApp messages or calls or whatever. I'm saying, please tell me your availability and see if you can take it, right?
+[09.34–09.40] And it's all it's all manual. I'm guessing at that point
+[09.45–09.51] Okay, and for the just switching for the tours that you already have scheduled
+[09.52–09.59] How do you get guides for those tools? Is that also a manual process set up in advance?
+[09.93–10.04] Right
+[10.07–10.16] Okay
+[10.16–10.18] Okay
+[10.18–10.32] So Kevin on both the scheduled as well as these these private tours
+[10.33–10.42] Where do you see the biggest opportunity or gap or some problems that you know, you know
+[10.42–10.51] Keep you guys up in terms of figuring out ways to solve for it. Like where do you guys see the biggest pain points?
+[10.71–10.78] Wow, okay
+[10.80–10.99] Okay, so just hear me out Kevin on this I was this is because this is exactly what Pfizer also pointed out
+[10.99–11.08] She didn't know the your avenue splits, but she pointed at this out as a potential area or pain point for you guys
+[11.09–11.17] What if there's an automated system that you know, when a request for booking comes in
+[11.18–11.24] Depending on the time you know, like like you said, you know, if it's a week out versus if it's a week
+[11.25–11.31] Tomorrow if it's especially if it's a week out there's an automated thing
+[11.31–11.31] Yes
+[11.31–11.43] We'll take your booking and a message that goes out say you have got three guides in your system that are qualified for the Jewish heritage
+[11.43–11.44] door, right
+[11.44–11.54] It goes out to either all three at the same time or one by one depending on whatever you guys are comfortable with and it
+[11.54–11.67] Automatically tells the guide. Hey, this is set up for this time. Are you available? Please confirm if the guide conforms back and says yes
+[11.67–11.76] I'm available it automatically the system automatically schedules a guide and tells the customer. Yes, the private tour is booked
+[11.76–11.81] So all of that happens without you guys even lifting a finger, right?
+[11.82–11.91] On the second option might be the guide says no or it shifts to the next guide and it shifts to the next guide
+[11.91–11.96] Right, so you see how it goes in the round-robin manner asking them
+[11.96–12.02] Please confirm back in two three hours or whatever your time frame you're comfortable with
+[12.02–12.12] Is how about how would in your head would that something like an automation like that? Would that be useful?
+[12.48–12.50] Okay, that's great
+[12.50–12.56] So that's I've already been thinking about what and how to make that solution work
+[12.56–12.63] I can factor even I've started working on a demo because why is that octave over this and I can probably
+[12.63–12.73] If we if you're potentially available to meet next week, I can even show you a working demo of how that could function
+[12.74–12.80] As well it can function through whatsapp and all that kind of methods that your guides use, right?
+[12.80–12.84] So it keeps it very seamless keeps it very low
+[12.85–12.94] You know difficulty for them, which is always the way I think about things, right? How is it easy for you?
+[12.94–13.00] How is it easy for the guides? How is it easy for your customer? All of it needs to be easy
+[13.00–13.03] So it works seamlessly
+[13.03–13.11] All right, nothing. No new systems. No new ways of doing business that complicate things for you
+[13.12–13.19] That's not I'm not a big proponent of that. So just stepping back from this as well Kevin
+[13.21–13.32] Broadly I want to ask you where are the especially as a marketing person right for trying to make you know
+[13.32–13.34] Trying to grow
+[13.34–13.36] khaki's business
+[13.36–13.46] What are the opportunities of bigger larger pain points that you see as well, you know, how do you get more leads?
+[13.46–13.52] How do you get more customers? How do you get customers signing up for your tours more?
+[13.53–13.57] Maybe how do you create more to whatever it might be just
+[13.58–13.61] Broadly I would like to understand that
+[14.15–14.19] No marketing
+[14.60–15.38] Okay, right
+[16.88–17.06] Do you guys use do you guys do any optimization for AI searching as well
+[17.07–17.24] So just a fire almost I think now just love over the last year and it's definitely growing very rapidly
+[17.24–17.30] More than half search you more than half the searches are available. Yeah
+[18.15–18.18] Okay, I can
+[18.20–18.23] Definitely give you some
+[18.23–18.26] You know some some
+[18.26–18.36] Feedback on that and some advice on how you should proceed on the website as well because that's a it's a very important gateway entry point
+[18.36–18.43] Especially for AI search engines and I say I search engines, you know
+[18.43–18.48] Just chat GPD cloud all of those tools that people use
+[18.48–18.59] How your website functions is very critical in showing up in these AI searches as well
+[18.60–18.62] So that's that's good
+[18.62–18.69] So then and so you talking about your leads how you get them where you're you know
+[18.69–18.73] The difficulties in sourcing international leads from these different markets
+[18.73–18.77] I'm by the way, I'm the perfect example of that
+[18.77–18.85] I'm the US NRI that comes and visits India once a year that you know comes for your tours
+[18.85–18.89] It's on perfectly in that in that audience
+[19.27–19.36] are
+[19.63–19.78] Yeah, I can see that and that's a much different challenge from what you're doing in Bombay because you're competing with a very
+[19.79–19.86] Different set of competitors in that travel guide space for international tours
+[20.10–20.16] Yeah, and if I don't if I said talk to me about a couple of different ones on those that she's done
+[20.65–20.73] Got it
+[20.73–20.82] Are you are you where do you think you're sourcing these marketing or these customers for these international tours?
+[20.82–20.91] Are they customers who have been on khaki walking tours in Bombay either private or scheduled ones?
+[20.91–21.77] Yeah, that's a very very different proposition and a challenge to solve for sure. Yeah, that makes sense. I definitely want to think through that one as well
+[21.79–21.90] Okay, do you guys because of a way of how you consistently keep in touch with customers that have already been on your tours
+[21.93–22.14] be successful with
+[22.26–22.34] Wow, okay
+[22.34–22.56] By the way, the 15% or was actually very good number for an email open rate
+[22.58–22.63] 3% it's a little low but still very typical
+[22.64–22.75] But 15% actually was an excellent number that you guys had. Okay
+[22.76–22.84] Yes
+[22.94–23.15] Have you have you considered what's our marketing
+[23.80–23.82] Yeah
+[23.82–24.08] Yeah, and not not only that whatsapp
+[24.08–24.21] It's a meta itself is making a lot of changes even to their pricing and how they review messages as a marketing message versus the utility
+[24.21–24.23] message versus
+[24.23–24.27] you know, it's all of those things that
+[24.29–24.37] If that's another area where we can definitely have a deeper conversation as well
+[24.37–24.45] Because I feel like especially in India to your Indian customer base and especially if you're thinking
+[24.46–24.56] Existing customers, how do we get them to be international customers of ours as well as in like for customers for international trips
+[24.56–24.65] I think whatsapp potentially is a key avenue there for growing it if it's done smartly without
+[24.65–24.72] Blowing your marketing budget out of the water because whatsapp marketing is getting very expensive
+[24.72–24.75] very fast
+[24.75–24.83] And so this there's definitely thoughts there as well. So this is this is really good feedback
+[24.84–24.88] and
+[24.88–24.99] Have you I know one other thing that Pfizer had a challenge with is once your door is done
+[25.00–25.11] Capturing reviews and feedback for customers is very if you read obviously guides ask for feedback
+[25.13–25.19] But don't always get it and people don't always go in and give Google reviews
+[25.20–25.28] Would you feel like an automation there would potentially help where you know the customer they finish the tour
+[25.29–25.38] Maybe after a set time either immediately or after a set amount of time they get a message back on what they're saying
+[25.38–26.03] So Kevin what I'm seeing is right you obviously want your employees
+[26.04–26.07] Focusing on getting more customers
+[26.07–26.17] Figuring out how they improve the customer experience through your tours all of those sort of things that the the grunt work
+[26.17–26.23] Of capturing customer information scheduling guides
+[26.24–26.35] Capturing post tour information all of those things are not necessarily adding a lot of value besides
+[26.35–26.38] But they're adding a lot of work for your team
+[26.38–26.49] They're adding value in the sense that obviously you need that information you want to but but that is an area which is repeatable
+[26.49–26.58] It's it's you're having to do it constantly. That's an avenue of aware in my head automation makes sense, right?
+[26.58–26.64] Automation makes sense where you're doing the same thing again and again and again and again
+[26.64–26.73] It's something very standard, but it's taking up a lot of your time where automation does not make sense as if it's like hey
+[26.73–26.84] I really need to provide great customer experience in certain things and facets of the of the customer journey with you
+[26.84–26.90] Those are potentially things who stay away from automation. He's saying no, I need my guides
+[26.90–26.98] I need my you know ops people providing that that level of experience to the customer
+[26.98–27.07] But where it is repeatable automation might make sense of it. That's that's the way I think about it if that makes sense
+[27.07–27.11] Yeah
+[27.11–27.20] So so Kevin, I think this is this is great information. I obviously want to meet with Priya as well to get her take
+[27.20–27.23] I'm gonna give her a call
+[27.23–27.26] Harat gave me a contact information
+[27.40–27.49] Okay, I can give her a call next week would it make sense Kevin to schedule some time to come into your office
+[27.49–27.57] I already have a lot of ideas that I'm thinking about after this conversation. This has been excellent for me
+[27.57–27.66] So I would love to put those thoughts on paper maybe even show you a few things that are possible
+[27.67–27.73] And have a meeting with you sit and never you can brainstorming and say yeah, this makes sense
+[27.73–27.82] This doesn't or we want to do things differently, you know, would love that would love that sort of feedback from you, right?
+[27.83–27.86] Would you have some time next week to meet?
+[27.87–27.90] Yeah
+[27.90–28.09] Yeah, how does how does let's say sometime Wednesday's it does that work for you?
+[28.24–28.30] Okay, let's let's target Tuesday. Do you have a time slot in mind during the day?
+[28.39–28.43] Okay
+[28.43–28.50] Okay, yeah, yeah, so and I if possible I'd love to do this at your office if that makes sense
+[28.54–28.57] Okay, so so Kevin I will
+[28.58–28.64] Do you have someone in your office typically schedule these meetings for you?
+[28.64–28.71] Do you want me to send you meeting just so that you block off that time? How do you want this to work?
+[28.87–28.99] Yeah, let's a 1030 works for me. So let's just let's just finalize 1030 on Tuesday and I'll send you a meeting and invite as well
+[29.02–29.08] Awesome. Thanks Kevin. This has been excellent. I really appreciate it. Thank you
+[29.09–29.13] Take care. Bye. Bye

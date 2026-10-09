@@ -1,0 +1,151 @@
+{
+  "name": "Khaki OS: Corporate B2B Lead 15m SLA Guard",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "khaki-corporate-lead-intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "lead-webhook-trigger",
+      "name": "Inbound Lead Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.KHAKI_OS_API_URL }}/api/agent-query/leads/classify",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ $json.body.message_text }}\",\n  \"contact_phone\": \"{{ $json.body.contact_phone }}\",\n  \"contact_name\": \"{{ $json.body.contact_name }}\"\n}"
+      },
+      "id": "classify-lead",
+      "name": "Score Intent in Khaki OS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.priority }}",
+              "value2": "P1_URGENT"
+            }
+          ]
+        }
+      },
+      "id": "if-p1-corporate",
+      "name": "Is High-LTV Corporate?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v20.0/{{ $env.WHATSAPP_PHONE_NUMBER_ID }}/messages",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $env.BHARAT_FOUNDER_PHONE }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"🏢 *VIP CORPORATE LEAD DETECTED (15m SLA)*\\n\\nCompany: {{ $('Inbound Lead Webhook').item.json.body.company_name || 'Enterprise Inquirer' }}\\nContact: {{ $('Inbound Lead Webhook').item.json.body.contact_name }} ({{ $('Inbound Lead Webhook').item.json.body.contact_phone }})\\n\\nInquiry: \\\"{{ $('Inbound Lead Webhook').item.json.body.message_text }}\\\"\\n\\n⚠️ *Target SLA: 15 Minutes*\\nOpen Inbox to engage:\\n👉 {{ $env.KHAKI_OS_APP_URL }}/inbox\"\n  }\n}"
+      },
+      "id": "alert-bharat-whatsapp",
+      "name": "Alert Bharat Gothoskar (WhatsApp)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "amount": 15,
+        "unit": "minutes"
+      },
+      "id": "wait-15m-sla",
+      "name": "Wait 15 Minutes SLA",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.KHAKI_OS_API_URL }}/api/inbox/lead-status?phone={{ $('Inbound Lead Webhook').item.json.body.contact_phone }}"
+      },
+      "id": "check-handled-status",
+      "name": "Check if Taken Over by Staff",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1120, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.human_taken_over }}",
+              "value2": false
+            }
+          ]
+        }
+      },
+      "id": "if-sla-breached",
+      "name": "SLA Breached?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1340, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v20.0/{{ $env.WHATSAPP_PHONE_NUMBER_ID }}/messages",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $env.PRIYA_OPS_PHONE }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"🚨 *SLA BREACH ALERT: 15 MINUTES UNANSWERED*\\n\\nCorporate Lead from {{ $('Inbound Lead Webhook').item.json.body.contact_name }} ({{ $('Inbound Lead Webhook').item.json.body.contact_phone }}) has had no human response for 15 minutes!\\n\\nImmediate phone call recommended: tel:{{ $('Inbound Lead Webhook').item.json.body.contact_phone }}\"\n  }\n}"
+      },
+      "id": "alert-priya-escalation",
+      "name": "Alert Priya (SLA Escalation)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1560, 400]
+    }
+  ],
+  "connections": {
+    "Inbound Lead Webhook": {
+      "main": [
+        [{ "node": "Score Intent in Khaki OS", "type": "main", "index": 0 }]
+      ]
+    },
+    "Score Intent in Khaki OS": {
+      "main": [
+        [{ "node": "Is High-LTV Corporate?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Is High-LTV Corporate?": {
+      "main": [
+        [
+          { "node": "Alert Bharat Gothoskar (WhatsApp)", "type": "main", "index": 0 },
+          { "node": "Wait 15 Minutes SLA", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Wait 15 Minutes SLA": {
+      "main": [
+        [{ "node": "Check if Taken Over by Staff", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check if Taken Over by Staff": {
+      "main": [
+        [{ "node": "SLA Breached?", "type": "main", "index": 0 }]
+      ]
+    },
+    "SLA Breached?": {
+      "main": [
+        [{ "node": "Alert Priya (SLA Escalation)", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}
