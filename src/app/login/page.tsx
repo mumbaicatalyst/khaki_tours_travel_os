@@ -12,8 +12,8 @@ function LoginForm() {
   const redirectTarget = searchParams.get('redirect') || '/';
   const { setRole } = useRole();
 
-  const [email, setEmail] = useState('ops@khakitours.com');
-  const [password, setPassword] = useState('khaki2026!');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +26,6 @@ function LoginForm() {
 
   const handleSelectQuickAccount = (acc: typeof QUICK_ACCOUNTS[0]) => {
     setEmail(acc.email);
-    setPassword('khaki2026!');
     setError(null);
   };
 
@@ -87,14 +86,14 @@ function LoginForm() {
           </p>
         </div>
 
-        {/* Quick Staff Demo Chips */}
+        {/* Staff Account Selector */}
         <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3 space-y-2">
           <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 flex items-center justify-between">
             <span className="flex items-center gap-1.5">
               <Sparkles className="w-3 h-3 text-amber-400" />
-              Quick Staff One-Click Fill
+              Select Staff Profile
             </span>
-            <span className="text-slate-500 font-mono">Passcode: khaki2026!</span>
+            <span className="text-slate-500 text-[10px]">Private Passcode Required</span>
           </div>
           <div className="grid grid-cols-2 gap-1.5">
             {QUICK_ACCOUNTS.map((acc) => (
