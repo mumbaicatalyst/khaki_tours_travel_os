@@ -37,6 +37,32 @@ export interface CostSettings {
   }>;
 }
 
+export interface ReviewSettings {
+  googleReviewUrl: string;
+  automationMode: 'AUTO_PILOT_2H' | 'MANUAL_APPROVAL' | 'INSTANT';
+  enabled: boolean;
+  minRatingThreshold: number;
+}
+
+export interface StagedReviewDeparture {
+  id: string;
+  departure_id: string;
+  tour_title: string;
+  guide_name: string;
+  completed_at: string;
+  scheduled_dispatch_at: string;
+  status: 'SCHEDULED' | 'DISPATCHED' | 'CANCELLED';
+  recipients_count: number;
+  recipients: Array<{
+    guest_id: string;
+    name: string;
+    phone: string;
+    eligible: boolean;
+    sent?: boolean;
+    sent_at?: string;
+  }>;
+}
+
 export interface AppStoreData {
   tours: any[];
   contacts: any[];
@@ -47,6 +73,8 @@ export interface AppStoreData {
   manifests: any[];
   guides?: any[];
   costSettings?: CostSettings;
+  reviewSettings?: ReviewSettings;
+  reviewQueues?: StagedReviewDeparture[];
   whatsappConversations?: any[];
   whatsappMessages?: any[];
 }
@@ -1462,6 +1490,110 @@ class PersistentStore {
       grossProfitInr,
       grossMarginPercent,
     };
+  }
+
+  // ==========================================
+  // GOOGLE REVIEWS & POST-TOUR AUTOMATION
+  // ==========================================
+  public getDefaultReviewSettings(): ReviewSettings {
+    return {
+      googleReviewUrl: process.env.GOOGLE_REVIEW_URL || 'https://g.page/r/khaki-tours/review',
+      automationMode: 'AUTO_PILOT_2H',
+      enabled: true,
+      minRatingThreshold: 4,
+    };
+  }
+
+  public getReviewSettings(): ReviewSettings {
+    if (!this.data.reviewSettings) {
+      this.data.reviewSettings = this.getDefaultReviewSettings();
+    }
+    return this.data.reviewSettings;
+  }
+
+  public updateReviewSettings(updates: Partial<ReviewSettings>): ReviewSettings {
+    const current = this.getReviewSettings();
+    this.data.reviewSettings = {
+      ...current,
+      ...updates,
+    };
+    this.persist();
+    return this.data.reviewSettings;
+  }
+
+  public getReviewQueues(): StagedReviewDeparture[] {
+    if (!this.data.reviewQueues) {
+      // Seed realistic initial queues from recent departures
+      this.data.reviewQueues = [
+        {
+          id: 'queue_dep_8901',
+          departure_id: 'dep_8901',
+          tour_title: '#FortWalk: Colonial Heritage',
+          guide_name: 'Aniket (Historian Fellow)',
+          completed_at: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+          scheduled_dispatch_at: new Date(Date.now() + 75 * 60 * 1000).toISOString(),
+          status: 'SCHEDULED',
+          recipients_count: 8,
+          recipients: [
+            { guest_id: 'bkg_8901_g_1', name: 'Karan Mehra', phone: '+91 98200 88712', eligible: true },
+            { guest_id: 'bkg_8901_g_2', name: 'Pooja Mehra', phone: '+91 98200 88713', eligible: true },
+            { guest_id: 'seed_dep_8901_2', name: 'Vikram Patel', phone: '+91 98200 44551', eligible: true },
+          ],
+        },
+      ];
+    }
+    return this.data.reviewQueues;
+  }
+
+  public stageDepartureForReviews(params: {
+    departureId: string;
+    tourTitle: string;
+    guideName: string;
+    recipients: Array<{ guest_id: string; name: string; phone: string; eligible?: boolean }>;
+    scheduledDispatchAt?: string;
+  }): StagedReviewDeparture {
+    if (!this.data.reviewQueues) this.data.reviewQueues = [];
+    
+    // Check if already staged
+    const existing = this.data.reviewQueues.find((q) => q.departure_id === params.departureId && q.status === 'SCHEDULED');
+    if (existing) {
+      existing.recipients = params.recipients.map((r) => ({
+        ...r,
+        eligible: r.eligible !== false,
+      }));
+      existing.recipients_count = existing.recipients.filter((r) => r.eligible).length;
+      this.persist();
+      return existing;
+    }
+
+    const scheduledAt = params.scheduledDispatchAt || new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
+    const newQueue: StagedReviewDeparture = {
+      id: `queue_${params.departureId}_${Date.now().toString().slice(-4)}`,
+      departure_id: params.departureId,
+      tour_title: params.tourTitle,
+      guide_name: params.guideName,
+      completed_at: new Date().toISOString(),
+      scheduled_dispatch_at: scheduledAt,
+      status: 'SCHEDULED',
+      recipients_count: params.recipients.filter((r) => r.eligible !== false).length,
+      recipients: params.recipients.map((r) => ({
+        ...r,
+        eligible: r.eligible !== false,
+      })),
+    };
+
+    this.data.reviewQueues.unshift(newQueue);
+    this.persist();
+    return newQueue;
+  }
+
+  public updateReviewQueueStatus(queueId: string, status: 'SCHEDULED' | 'DISPATCHED' | 'CANCELLED'): boolean {
+    if (!this.data.reviewQueues) return false;
+    const queue = this.data.reviewQueues.find((q) => q.id === queueId || q.departure_id === queueId);
+    if (!queue) return false;
+    queue.status = status;
+    this.persist();
+    return true;
   }
 }
 

@@ -5,7 +5,7 @@ import {
   Send, Users, Mail, MessageSquare, Instagram, Star, Sparkles, 
   DollarSign, ArrowUpRight, CheckCircle2, AlertCircle, RefreshCw, 
   Search, ShieldCheck, ChevronRight, BarChart2, Compass, Globe,
-  TrendingUp, Tag, Percent, MousePointerClick, AlertTriangle, Layers, Award
+  TrendingUp, Tag, Percent, MousePointerClick, AlertTriangle, Layers, Award, Clock, Check
 } from 'lucide-react';
 
 export default function MarketingCampaignsPage() {
@@ -54,6 +54,19 @@ export default function MarketingCampaignsPage() {
 
   // Review Collector State
   const [reviewTriggering, setReviewTriggering] = useState(false);
+  const [reviewSettings, setReviewSettings] = useState<{
+    googleReviewUrl: string;
+    automationMode: 'AUTO_PILOT_2H' | 'MANUAL_APPROVAL' | 'INSTANT';
+    enabled: boolean;
+    minRatingThreshold: number;
+  }>({
+    googleReviewUrl: 'https://g.page/r/khaki-tours/review',
+    automationMode: 'AUTO_PILOT_2H',
+    enabled: true,
+    minRatingThreshold: 4,
+  });
+  const [reviewQueues, setReviewQueues] = useState<any[]>([]);
+  const [isSavingReviewSettings, setIsSavingReviewSettings] = useState(false);
 
   // Low Occupancy Departures List
   const lowOccupancyDepartures = [
@@ -113,6 +126,14 @@ export default function MarketingCampaignsPage() {
         if (data.audiences) setAudiences(data.audiences);
       })
       .catch((e) => console.error(e));
+
+    fetch('/api/marketing/reviews')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.settings) setReviewSettings(data.settings);
+        if (data.queues) setReviewQueues(data.queues);
+      })
+      .catch((e) => console.error(e));
   }, []);
 
   const handleLaunchCampaign = async () => {
@@ -144,13 +165,99 @@ export default function MarketingCampaignsPage() {
     }
   };
 
+  const handleUpdateReviewSettings = async (updates: Partial<typeof reviewSettings>) => {
+    setIsSavingReviewSettings(true);
+    const newSettings = { ...reviewSettings, ...updates };
+    setReviewSettings(newSettings);
+    try {
+      const res = await fetch('/api/marketing/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'UPDATE_SETTINGS',
+          ...newSettings,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotification('✓ Google Reviews policy & URL settings saved.');
+        setTimeout(() => setNotification(null), 4000);
+      }
+    } catch (e: any) {
+      console.error(e);
+    } finally {
+      setIsSavingReviewSettings(false);
+    }
+  };
+
   const handleTriggerReviews = async () => {
     setReviewTriggering(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/marketing/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'DISPATCH_BLAST',
+          googleReviewUrl: reviewSettings.googleReviewUrl,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotification(
+          `⭐ Post-tour Google Review blast dispatched! Delivered: ${data.dispatchedCount} walkers via WhatsApp.${data.failedCount > 0 ? ` (${data.failedCount} pending/whitelisting needed)` : ''}`
+        );
+        fetch('/api/marketing/reviews')
+          .then((r) => r.json())
+          .then((d) => d.queues && setReviewQueues(d.queues));
+      } else {
+        setNotification(`⚠️ Review blast notice: ${data.error || 'Failed to dispatch'}`);
+      }
+    } catch (e: any) {
+      setNotification(`❌ Error triggering reviews: ${e.message}`);
+    } finally {
       setReviewTriggering(false);
-      setNotification('⭐ Post-tour Google Review prompts dispatched to 14 verified walkers from this morning\'s departures! 1-click review link active.');
-      setTimeout(() => setNotification(null), 6000);
-    }, 1200);
+      setTimeout(() => setNotification(null), 7000);
+    }
+  };
+
+  const handleDispatchQueue = async (queueId: string) => {
+    try {
+      const res = await fetch('/api/marketing/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'DISPATCH_QUEUE', queueId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotification(`⭐ Staged review queue dispatched! Sent ${data.dispatchedCount} review requests.`);
+        setTimeout(() => setNotification(null), 5000);
+        fetch('/api/marketing/reviews')
+          .then((r) => r.json())
+          .then((d) => d.queues && setReviewQueues(d.queues));
+      }
+    } catch (e: any) {
+      console.error(e);
+    }
+  };
+
+  const handleCancelQueue = async (queueId: string) => {
+    try {
+      const res = await fetch('/api/marketing/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'CANCEL_QUEUE', queueId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotification('Staged review dispatch cancelled.');
+        setTimeout(() => setNotification(null), 4000);
+        fetch('/api/marketing/reviews')
+          .then((r) => r.json())
+          .then((d) => d.queues && setReviewQueues(d.queues));
+      }
+    } catch (e: any) {
+      console.error(e);
+    }
   };
 
   // Recipient Count based on segment
@@ -895,45 +1002,282 @@ export default function MarketingCampaignsPage() {
 
       {/* TAB 4: AUTOMATED REVIEW COLLECTOR */}
       {activeTab === 'REVIEWS' && (
-        <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <Star className="w-4 h-4 text-amber-400" />
-                Automated Post-Tour Google Review Collector
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Triggered automatically 2 hours after walk attendance is checked on the manifest. Boosts Google Maps & AI search discovery.
-              </p>
+        <div className="space-y-5">
+          {/* Main Action Header */}
+          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                  <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                  Automated Post-Tour Google Review Collector
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Dispatches direct 1-click Google Maps review links to verified walkers after their heritage trail. Boosts local SEO &amp; AI search rankings.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleTriggerReviews}
+                  disabled={reviewTriggering}
+                  className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-xs transition flex items-center gap-1.5 shadow disabled:opacity-50"
+                >
+                  <Star className="w-3.5 h-3.5 fill-slate-950" />
+                  {reviewTriggering ? 'Dispatched!' : 'Trigger Review Blast (Today\'s Walkers)'}
+                </button>
+              </div>
             </div>
 
-            <button
-              onClick={handleTriggerReviews}
-              disabled={reviewTriggering}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-xs transition flex items-center gap-1.5 disabled:opacity-50"
-            >
-              <Star className="w-3.5 h-3.5" />
-              {reviewTriggering ? 'Dispatched!' : 'Trigger Review Blast (Today&apos;s Walkers)'}
-            </button>
+            {/* Performance Strip */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1.5">
+                <span className="text-[10px] text-slate-400 uppercase font-mono">Google Verified Reviews</span>
+                <div className="text-2xl font-bold text-amber-400 font-mono">287 Reviews</div>
+                <p className="text-[11px] text-slate-400">4.93 ★ average across Fort, Bandra, and Girgaon heritage walks.</p>
+              </div>
+
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1.5">
+                <span className="text-[10px] text-slate-400 uppercase font-mono">Post-Tour Review Conversion</span>
+                <div className="text-2xl font-bold text-emerald-400 font-mono">31.4% Conversion</div>
+                <p className="text-[11px] text-slate-400">Peak response when dispatched within 2 hours of tour completion.</p>
+              </div>
+
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1.5">
+                <span className="text-[10px] text-slate-400 uppercase font-mono">AI Search Recommendation Lift</span>
+                <div className="text-2xl font-bold text-purple-400 font-mono">Top #1 Pick</div>
+                <p className="text-[11px] text-slate-400">Ranked #1 for &quot;Best heritage walk in Mumbai&quot; on ChatGPT, Claude &amp; Gemini.</p>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-              <span className="text-[10px] text-slate-400 uppercase font-mono">Google Verified Reviews</span>
-              <div className="text-2xl font-bold text-amber-400 font-mono">287 Reviews</div>
-              <p className="text-[11px] text-slate-400">4.93 ★ overall average across Fort, Bandra, and Girgaon walks.</p>
+          {/* Operational Policy & Settings Panel */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {/* Left: Dispatch Policy Mode */}
+            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  Review Automation Policy
+                </h3>
+                <span className="text-[11px] font-mono text-slate-400">
+                  Current: <strong className="text-amber-400">{reviewSettings.automationMode.replace('_', ' ')}</strong>
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
+                <div
+                  onClick={() => handleUpdateReviewSettings({ automationMode: 'AUTO_PILOT_2H' })}
+                  className={`p-3 rounded-xl border transition cursor-pointer flex items-start gap-3 ${
+                    reviewSettings.automationMode === 'AUTO_PILOT_2H'
+                      ? 'bg-amber-950/30 border-amber-500/60 text-white'
+                      : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="automationMode"
+                    checked={reviewSettings.automationMode === 'AUTO_PILOT_2H'}
+                    onChange={() => {}}
+                    className="mt-0.5"
+                  />
+                  <div>
+                    <div className="font-bold text-xs flex items-center gap-2">
+                      ⚡ Auto-Pilot (2-Hour Guard Window)
+                      <span className="px-1.5 py-0.2 rounded text-[9.5px] bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">
+                        Recommended
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                      Manifest close automatically queues walkers for review. Gives staff a 2-hour window to cancel or uncheck anyone who had an issue before WhatsApp dispatch fires.
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  onClick={() => handleUpdateReviewSettings({ automationMode: 'MANUAL_APPROVAL' })}
+                  className={`p-3 rounded-xl border transition cursor-pointer flex items-start gap-3 ${
+                    reviewSettings.automationMode === 'MANUAL_APPROVAL'
+                      ? 'bg-amber-950/30 border-amber-500/60 text-white'
+                      : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="automationMode"
+                    checked={reviewSettings.automationMode === 'MANUAL_APPROVAL'}
+                    onChange={() => {}}
+                    className="mt-0.5"
+                  />
+                  <div>
+                    <div className="font-bold text-xs">🛡️ Strict Human Approval (Draft Mode)</div>
+                    <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                      Manifest close creates a staged draft batch. No WhatsApp review messages are sent until operations explicitly reviews and clicks &quot;Send Now&quot;.
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  onClick={() => handleUpdateReviewSettings({ automationMode: 'INSTANT' })}
+                  className={`p-3 rounded-xl border transition cursor-pointer flex items-start gap-3 ${
+                    reviewSettings.automationMode === 'INSTANT'
+                      ? 'bg-amber-950/30 border-amber-500/60 text-white'
+                      : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="automationMode"
+                    checked={reviewSettings.automationMode === 'INSTANT'}
+                    onChange={() => {}}
+                    className="mt-0.5"
+                  />
+                  <div>
+                    <div className="font-bold text-xs">🚀 Instant Blast (Immediate Send)</div>
+                    <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                      Dispatches WhatsApp review messages to verified walkers the very moment the guide marks attendance complete.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-              <span className="text-[10px] text-slate-400 uppercase font-mono">Post-Tour Review Conversion</span>
-              <div className="text-2xl font-bold text-emerald-400 font-mono">31.4%</div>
-              <p className="text-[11px] text-slate-400">Conversion rate when message is sent within 2 hours of walk finish.</p>
+            {/* Right: Direct Link Configuration & WhatsApp Preview */}
+            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-4">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Globe className="w-4 h-4 text-amber-400" />
+                Google Business Direct Review Shortlink
+              </h3>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-slate-400 text-xs block mb-1">Direct Review URL (1-Click Google Maps Modal)</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={reviewSettings.googleReviewUrl}
+                      onChange={(e) => setReviewSettings({ ...reviewSettings, googleReviewUrl: e.target.value })}
+                      placeholder="https://g.page/r/.../review"
+                      className="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-amber-400"
+                    />
+                    <button
+                      onClick={() => handleUpdateReviewSettings({ googleReviewUrl: reviewSettings.googleReviewUrl })}
+                      disabled={isSavingReviewSettings}
+                      className="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg transition disabled:opacity-50"
+                    >
+                      {isSavingReviewSettings ? 'Saving...' : 'Save Link'}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Opens the 5-star review modal immediately without asking guests to search for Khaki Tours.
+                  </p>
+                </div>
+
+                {/* WhatsApp Message Preview */}
+                <div>
+                  <label className="text-slate-400 text-xs block mb-1">WhatsApp Guest Preview:</label>
+                  <div className="bg-[#0b141a] border border-[#202c33] rounded-xl p-3.5 text-xs text-slate-200 space-y-1.5 shadow-inner">
+                    <div className="flex items-center justify-between text-[10px] text-emerald-400 mb-1 font-semibold">
+                      <span>🤖 Khaki Review Concierge</span>
+                      <span className="text-slate-500 font-mono text-[9px]">2h post-walk</span>
+                    </div>
+                    <p className="whitespace-pre-wrap leading-relaxed text-[11px]">
+                      Namaste Karan! 🏛️{'\n\n'}Thank you for walking with Khaki Tours today on *#FortWalk: Colonial Heritage* with Aniket! We hope you discovered Mumbai&apos;s vibrant heritage and untold stories.{'\n\n'}If you enjoyed your time with our historians, could you take 30 seconds to share your review on Google? Your review helps fellow travelers discover authentic heritage walks:{'\n\n'}⭐ *Leave a Google Review:*{'\n'}
+                      <span className="text-blue-400 underline font-mono break-all">{reviewSettings.googleReviewUrl}</span>{'\n\n'}See you on the heritage trail soon!{'\n'}— Team Khaki Tours
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Staged Departures & Review Queue Table */}
+          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-amber-400" />
+                  Staged Departures &amp; Review Outbox
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Walks currently staged in the 2-Hour Guard Window or recently dispatched.
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  fetch('/api/marketing/reviews')
+                    .then((r) => r.json())
+                    .then((d) => d.queues && setReviewQueues(d.queues));
+                }}
+                className="text-xs text-slate-400 hover:text-white flex items-center gap-1 font-medium"
+              >
+                <RefreshCw className="w-3.5 h-3.5" /> Refresh
+              </button>
             </div>
 
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-              <span className="text-[10px] text-slate-400 uppercase font-mono">AI Search Recommendation Lift</span>
-              <div className="text-2xl font-bold text-purple-400 font-mono">Top #1 Pick</div>
-              <p className="text-[11px] text-slate-400">Ranked #1 for &quot;Best heritage walk in Mumbai&quot; on ChatGPT, Claude &amp; Gemini.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-slate-800 text-slate-400 text-[11px] font-mono">
+                    <th className="pb-2.5">Tour Departure</th>
+                    <th className="pb-2.5">Guide</th>
+                    <th className="pb-2.5">Recipients</th>
+                    <th className="pb-2.5">Scheduled Release</th>
+                    <th className="pb-2.5">Status</th>
+                    <th className="pb-2.5 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60">
+                  {reviewQueues.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-6 text-center text-slate-500 text-xs">
+                        No staged departures currently in queue. Mark attendance in Manifests to queue a tour.
+                      </td>
+                    </tr>
+                  ) : (
+                    reviewQueues.map((q) => (
+                      <tr key={q.id} className="hover:bg-slate-800/20 transition">
+                        <td className="py-3 font-medium text-white">{q.tour_title}</td>
+                        <td className="py-3 text-slate-300">{q.guide_name}</td>
+                        <td className="py-3 font-mono text-emerald-400 font-bold">{q.recipients_count} Walkers</td>
+                        <td className="py-3 text-slate-400 font-mono text-[11px]">
+                          {new Date(q.scheduled_dispatch_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </td>
+                        <td className="py-3">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
+                            q.status === 'SCHEDULED'
+                              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                              : q.status === 'DISPATCHED'
+                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                              : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                          }`}>
+                            {q.status}
+                          </span>
+                        </td>
+                        <td className="py-3 text-right">
+                          {q.status === 'SCHEDULED' ? (
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => handleDispatchQueue(q.id)}
+                                className="px-2.5 py-1 bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/40 rounded text-[11px] font-bold transition flex items-center gap-1"
+                              >
+                                <Send className="w-3 h-3" /> Send Now
+                              </button>
+                              <button
+                                onClick={() => handleCancelQueue(q.id)}
+                                className="px-2 py-1 bg-slate-800 hover:bg-rose-950 text-slate-400 hover:text-rose-300 rounded text-[11px] font-medium transition"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-slate-500 text-[11px] font-mono">Archived</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Download, Users, CheckCircle2, ShieldAlert, Calendar, Clock, MapPin, Plus, UserCheck } from 'lucide-react';
+import { Download, Users, CheckCircle2, ShieldAlert, Calendar, Clock, MapPin, Plus, UserCheck, Star, Send } from 'lucide-react';
 
 interface ManifestGuest {
   id: string;
@@ -37,6 +37,11 @@ export default function ManifestsPage() {
   const [selectedDepId, setSelectedDepId] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [eligibleForReview, setEligibleForReview] = useState<Record<string, boolean>>({});
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewNotice, setReviewNotice] = useState<string | null>(null);
+  const [googleReviewLink, setGoogleReviewLink] = useState('https://g.page/r/khaki-tours/review');
   const [guests, setGuests] = useState<ManifestGuest[]>([
     {
       id: 'man-01',
@@ -214,6 +219,62 @@ export default function ManifestsPage() {
     });
   };
 
+  const handleQueueReviews = async (sendNow = false) => {
+    setIsSubmittingReview(true);
+    const selectedDep = departures.find((d) => d.id === selectedDepId || d.departure_id === selectedDepId);
+    const attendedGuests = guests.filter((g) => g.attended);
+    const eligibleRecipients = attendedGuests.map((g) => ({
+      guest_id: g.id,
+      name: g.full_name,
+      phone: g.phone,
+      eligible: eligibleForReview[g.id] !== false,
+    }));
+
+    try {
+      if (sendNow) {
+        const res = await fetch('/api/marketing/reviews', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'DISPATCH_BLAST',
+            recipients: eligibleRecipients.filter((r) => r.eligible),
+            tourTitle: selectedDep?.tour_title || 'Heritage Walk',
+            guideName: selectedDep?.assigned_guide_name || 'Khaki Historians',
+            googleReviewUrl: googleReviewLink,
+          }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setReviewNotice(`⭐ 1-Click Google Reviews dispatched to ${data.dispatchedCount} walkers via WhatsApp!`);
+        } else {
+          setReviewNotice(`⚠️ Review dispatch notice: ${data.error || 'Failed to dispatch'}`);
+        }
+      } else {
+        const res = await fetch('/api/marketing/reviews', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'STAGE_DEPARTURE',
+            departureId: selectedDepId,
+            tourTitle: selectedDep?.tour_title,
+            guideName: selectedDep?.assigned_guide_name,
+            recipients: eligibleRecipients,
+          }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setReviewNotice(`⏳ Walk concluded! Staged ${eligibleRecipients.filter(r => r.eligible).length} walkers in the 2-Hour Auto-Pilot Queue. Will release automatically in 2 hours.`);
+        }
+      }
+      setIsReviewModalOpen(false);
+    } catch (e: any) {
+      setReviewNotice(`❌ Error: ${e.message}`);
+    } finally {
+      setIsSubmittingReview(false);
+      setTimeout(() => setReviewNotice(null), 8000);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Banner & Header */}
@@ -230,6 +291,20 @@ export default function ManifestsPage() {
 
         <div className="flex items-center gap-2.5">
           <button
+            onClick={() => {
+              const initEligible: Record<string, boolean> = {};
+              guests.forEach((g) => {
+                if (g.attended) initEligible[g.id] = true;
+              });
+              setEligibleForReview(initEligible);
+              setIsReviewModalOpen(true);
+            }}
+            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition flex items-center gap-1.5 shadow"
+          >
+            <Star className="w-4 h-4 text-amber-300 fill-amber-300" />
+            ⭐ Conclude Walk &amp; Queue Reviews
+          </button>
+          <button
             onClick={() => setIsAddModalOpen(true)}
             className="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg transition flex items-center gap-1.5 shadow"
           >
@@ -245,6 +320,17 @@ export default function ManifestsPage() {
           </button>
         </div>
       </div>
+
+      {/* Review Notice Toast */}
+      {reviewNotice && (
+        <div className="bg-emerald-950/90 border border-emerald-500/50 p-3.5 rounded-xl text-emerald-200 text-xs flex items-center justify-between shadow-lg">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span className="font-medium">{reviewNotice}</span>
+          </div>
+          <button onClick={() => setReviewNotice(null)} className="text-emerald-400 hover:text-white ml-3">✕</button>
+        </div>
+      )}
 
       {/* What Is This Page Explainer Banner */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
@@ -533,6 +619,116 @@ export default function ManifestsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Post-Tour Review Staging Modal */}
+      {isReviewModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
+                <h3 className="font-bold text-white text-base">Conclude Walk &amp; Queue Google Reviews</h3>
+              </div>
+              <button onClick={() => setIsReviewModalOpen(false)} className="text-slate-400 hover:text-white">✕</button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+                <div className="flex items-center justify-between text-slate-300">
+                  <span className="font-bold text-white text-sm">{departures.find((d) => d.id === selectedDepId || d.departure_id === selectedDepId)?.tour_title || 'Selected Walk'}</span>
+                  <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold text-[11px]">
+                    {guests.filter((g) => g.attended).length} Checked-In Walkers
+                  </span>
+                </div>
+                <div className="text-[11px] text-slate-400">
+                  Guide: <span className="text-amber-400 font-medium">{departures.find((d) => d.id === selectedDepId || d.departure_id === selectedDepId)?.assigned_guide_name || 'Khaki Ambassador'}</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-slate-300 font-semibold block mb-1.5">
+                  Attendee Review Eligibility (Uncheck anyone who reported an issue/complaint):
+                </label>
+                <div className="max-h-48 overflow-y-auto space-y-1.5 border border-slate-800 rounded-xl p-2 bg-slate-950/60">
+                  {guests.filter((g) => g.attended).length === 0 ? (
+                    <div className="p-3 text-center text-slate-500 text-[11px]">
+                      No walkers marked as &quot;Checked In&quot; yet. Mark attendance first!
+                    </div>
+                  ) : (
+                    guests.filter((g) => g.attended).map((g) => (
+                      <label
+                        key={g.id}
+                        className="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800/80 hover:border-slate-700 cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <input
+                            type="checkbox"
+                            checked={eligibleForReview[g.id] !== false}
+                            onChange={(e) =>
+                              setEligibleForReview((prev) => ({ ...prev, [g.id]: e.target.checked }))
+                            }
+                            className="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-400"
+                          />
+                          <div>
+                            <div className="font-medium text-white">{g.full_name}</div>
+                            <div className="text-[10px] text-slate-400 font-mono">{g.phone}</div>
+                          </div>
+                        </div>
+                        <span className="text-[10px] text-emerald-400 font-mono">Verified Walker</span>
+                      </label>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-slate-300 font-semibold block mb-1">Direct Google Maps Review URL:</label>
+                <input
+                  type="text"
+                  value={googleReviewLink}
+                  onChange={(e) => setGoogleReviewLink(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white font-mono text-[11px]"
+                  placeholder="https://g.page/r/.../review"
+                />
+                <p className="text-[10.5px] text-slate-400 mt-1">
+                  💡 This 1-click shortlink directly opens the 5-star review drawer on the customer&apos;s phone inside WhatsApp.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-3 border-t border-slate-800 gap-2">
+              <button
+                type="button"
+                onClick={() => setIsReviewModalOpen(false)}
+                className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-medium text-xs"
+              >
+                Cancel
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={isSubmittingReview || guests.filter((g) => g.attended).length === 0}
+                  onClick={() => handleQueueReviews(true)}
+                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 rounded-lg font-bold text-xs transition flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  Send Now
+                </button>
+                <button
+                  type="button"
+                  disabled={isSubmittingReview || guests.filter((g) => g.attended).length === 0}
+                  onClick={() => handleQueueReviews(false)}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-xs transition flex items-center gap-1.5 shadow disabled:opacity-50"
+                >
+                  <Clock className="w-3.5 h-3.5" />
+                  {isSubmittingReview ? 'Queueing...' : 'Queue (Auto-Pilot in 2 Hours)'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
