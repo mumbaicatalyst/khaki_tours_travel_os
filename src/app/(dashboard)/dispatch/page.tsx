@@ -392,18 +392,20 @@ export default function DispatchBoardPage() {
                     </td>
                     <td className="p-3.5 text-right">
                       {item.status === 'BROADCAST_SENT' ? (
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => simulateAction(item.id, 'ACCEPTED')}
-                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[11px] font-semibold transition shadow-sm"
+                            className="w-7 h-7 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center"
+                            title="Accept Dispatch"
                           >
-                            ✓ Accept
+                            ✓
                           </button>
                           <button
                             onClick={() => simulateAction(item.id, 'DECLINED')}
-                            className="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded-md text-[11px] font-semibold transition shadow-sm"
+                            className="w-7 h-7 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center"
+                            title="Decline Dispatch"
                           >
-                            ✕ Decline
+                            ✕
                           </button>
                         </div>
                       ) : item.status === 'UNASSIGNED' ? (

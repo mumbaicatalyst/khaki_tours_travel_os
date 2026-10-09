@@ -39,3 +39,31 @@ body {
   scrollbar-color: rgba(71, 85, 105, 0.6) transparent;
 }
 
+/* Explicitly visible styled horizontal scrollbar for data tables on macOS */
+.visible-table-scrollbar {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 158, 11, 0.4) rgba(15, 23, 42, 0.9);
+}
+
+.visible-table-scrollbar::-webkit-scrollbar {
+  height: 8px !important;
+  display: block !important;
+}
+
+.visible-table-scrollbar::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.9) !important;
+  border-radius: 4px;
+}
+
+.visible-table-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(245, 158, 11, 0.4) !important;
+  border-radius: 4px;
+  border: 1px solid rgba(245, 158, 11, 0.6);
+}
+
+.visible-table-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.8) !important;
+}
+
+

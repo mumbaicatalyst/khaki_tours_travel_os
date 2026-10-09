@@ -945,73 +945,75 @@ export default function UnifiedInboxPage() {
         {activeSession ? (
           <div className="col-span-5 min-h-0 h-full flex flex-col bg-slate-900/20 border-r border-slate-800 overflow-hidden">
             {/* Active Header */}
-            <div className="shrink-0 p-3 border-b border-slate-800 bg-slate-900/70 flex items-center justify-between gap-2">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
+            <div className="shrink-0 p-3 border-b border-slate-800 bg-slate-900/80 flex flex-col gap-2">
+              {/* Row 1: Contact Title & Action Buttons */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0 flex items-center gap-2">
                   <h2 className="font-bold text-white text-sm truncate">{activeSession.customerName}</h2>
                   <span className="text-xs text-slate-400 font-mono shrink-0">{activeSession.phone}</span>
                 </div>
 
-                <div className="flex items-center gap-2 mt-1">
-                  {/* Stream Dropdown */}
-                  <select
-                    value={activeSession.inboundStream || 'PUBLIC_WALK'}
-                    onChange={(e) => handleChangeStream(activeSession.phone, e.target.value)}
-                    className="bg-slate-950 border border-slate-800 rounded px-1.5 py-0.5 text-[10px] text-amber-400 font-medium focus:outline-none"
+                {/* Action Buttons: Takeover & Audit */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    onClick={() => {
+                      setAuditTargetSession(activeSession);
+                      setIsAuditModalOpen(true);
+                    }}
+                    className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium rounded-lg transition flex items-center gap-1.5"
+                    title="View AI & Staff Conversation Audit"
                   >
-                    <option value="PUBLIC_WALK">🚶 Public Walk</option>
-                    <option value="PRIVATE_TOUR">🚙 Private Safari</option>
-                    <option value="CORPORATE_VIP">🏢 Corporate VIP</option>
-                    <option value="INTERNATIONAL">✈️ International</option>
-                    <option value="GENERAL_INQUIRY">💬 General Inquiry</option>
-                  </select>
+                    <BarChart3 className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Audit</span>
+                    <span className="text-[10px] px-1 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                      {activeSession.aiQualityScore || 95}%
+                    </span>
+                  </button>
 
-                  <span className="text-slate-600">•</span>
-
-                  {/* Staff Assignment Dropdown */}
-                  <select
-                    value={activeSession.assignedStaff || 'Unassigned'}
-                    onChange={(e) => handleReassignStaff(activeSession.phone, e.target.value)}
-                    className="bg-slate-950 border border-slate-800 rounded px-1.5 py-0.5 text-[10px] text-slate-300 font-medium focus:outline-none"
+                  <button
+                    onClick={() => handleTakeover(activeSession)}
+                    className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition flex items-center gap-1 border shadow-sm ${
+                      activeSession.humanTakeover
+                        ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+                        : activeSession.minutesElapsed > activeSession.slaMinutes
+                        ? 'bg-rose-950/80 hover:bg-rose-900 text-rose-300 border-rose-800/80'
+                        : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border-amber-500/40'
+                    }`}
                   >
-                    {STAFF_LIST.map((staff) => (
-                      <option key={staff} value={staff}>
-                        👤 {staff}
-                      </option>
-                    ))}
-                  </select>
+                    {activeSession.humanTakeover ? 'Release to AI' : 'Take Over'}
+                  </button>
                 </div>
               </div>
 
-              {/* Action Buttons: Takeover & Audit */}
-              <div className="flex items-center gap-1.5 shrink-0">
-                <button
-                  onClick={() => {
-                    setAuditTargetSession(activeSession);
-                    setIsAuditModalOpen(true);
-                  }}
-                  className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium rounded-lg transition flex items-center gap-1.5"
-                  title="View AI & Staff Conversation Audit"
+              {/* Row 2: Stream Selector & Staff Assignment */}
+              <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-800/50">
+                {/* Stream Dropdown */}
+                <select
+                  value={activeSession.inboundStream || 'PUBLIC_WALK'}
+                  onChange={(e) => handleChangeStream(activeSession.phone, e.target.value)}
+                  className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-[11px] text-amber-400 font-medium focus:outline-none"
                 >
-                  <BarChart3 className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Audit</span>
-                  <span className="text-[10px] px-1 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
-                    {activeSession.aiQualityScore || 95}%
-                  </span>
-                </button>
+                  <option value="PUBLIC_WALK">🚶 Public Walk</option>
+                  <option value="PRIVATE_TOUR">🚙 Private Safari</option>
+                  <option value="CORPORATE_VIP">🏢 Corporate VIP</option>
+                  <option value="INTERNATIONAL">✈️ International</option>
+                  <option value="GENERAL_INQUIRY">💬 General Inquiry</option>
+                </select>
 
-                <button
-                  onClick={() => handleTakeover(activeSession)}
-                  className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition flex items-center gap-1 border shadow-sm ${
-                    activeSession.humanTakeover
-                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
-                      : activeSession.minutesElapsed > activeSession.slaMinutes
-                      ? 'bg-rose-950/80 hover:bg-rose-900 text-rose-300 border-rose-800/80'
-                      : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border-amber-500/40'
-                  }`}
+                <span className="text-slate-600">•</span>
+
+                {/* Staff Assignment Dropdown */}
+                <select
+                  value={activeSession.assignedStaff || 'Unassigned'}
+                  onChange={(e) => handleReassignStaff(activeSession.phone, e.target.value)}
+                  className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-[11px] text-slate-300 font-medium focus:outline-none"
                 >
-                  {activeSession.humanTakeover ? 'Release to AI' : 'Take Over'}
-                </button>
+                  {STAFF_LIST.map((staff) => (
+                    <option key={staff} value={staff}>
+                      👤 {staff}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

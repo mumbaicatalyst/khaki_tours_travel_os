@@ -513,30 +513,30 @@ export default function GuideIntelligencePage() {
                 </h2>
               </div>
 
-              {/* Toggle Option A vs Option B */}
+              {/* Toggle Departures vs Catalog */}
               <div className="flex items-center gap-1.5 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs">
                 <button
                   onClick={() => setSelectorMode('OPTION_A_DEPARTURES')}
-                  className={`px-3 py-1.5 rounded font-bold transition flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-md font-medium transition flex items-center gap-1.5 ${
                     selectorMode === 'OPTION_A_DEPARTURES'
-                      ? 'bg-blue-600 text-white shadow'
+                      ? 'bg-slate-800 text-amber-300 border border-slate-700/80 shadow-sm font-semibold'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   <Calendar className="w-3.5 h-3.5" />
-                  <span>Option A: Upcoming Departures ({departures.length})</span>
+                  <span>Upcoming Departures ({departures.length})</span>
                 </button>
 
                 <button
                   onClick={() => setSelectorMode('OPTION_B_CATALOG')}
-                  className={`px-3 py-1.5 rounded font-bold transition flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-md font-medium transition flex items-center gap-1.5 ${
                     selectorMode === 'OPTION_B_CATALOG'
-                      ? 'bg-amber-500 text-slate-950 shadow'
+                      ? 'bg-slate-800 text-amber-300 border border-slate-700/80 shadow-sm font-semibold'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   <Landmark className="w-3.5 h-3.5" />
-                  <span>Option B: Scoped Catalog Explorer ({tours.length})</span>
+                  <span>Tour Catalog ({tours.length})</span>
                 </button>
               </div>
             </div>

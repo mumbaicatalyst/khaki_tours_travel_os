@@ -186,11 +186,11 @@ export default function BespokeCuratorStudioPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* LEFT COLUMN: BUILDER CONTROLS & ROUTE STITCHER (7 cols) */}
-        <div className="lg:col-span-7 space-y-5">
+        <div className="lg:col-span-7 space-y-6">
           
           {/* Step 1: Client Profile & Timing */}
-          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4.5 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
               <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
                 <Users className="w-4 h-4 text-amber-400" />
                 1. Client Profile & Delegation Details
@@ -200,68 +200,74 @@ export default function BespokeCuratorStudioPage() {
                 <button
                   type="button"
                   onClick={() => setClientType('CORPORATE')}
-                  className={`px-2.5 py-1 rounded font-bold transition ${
-                    clientType === 'CORPORATE' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+                  className={`px-3 py-1.5 rounded-md font-medium transition flex items-center gap-1.5 ${
+                    clientType === 'CORPORATE'
+                      ? 'bg-slate-800 text-amber-300 border border-slate-700/80 shadow-sm font-semibold'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  🏢 Corporate Delegation
+                  <span>🏢</span>
+                  <span>Corporate Delegation</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setClientType('PRIVATE_FAMILY')}
-                  className={`px-2.5 py-1 rounded font-bold transition ${
-                    clientType === 'PRIVATE_FAMILY' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'
+                  className={`px-3 py-1.5 rounded-md font-medium transition flex items-center gap-1.5 ${
+                    clientType === 'PRIVATE_FAMILY'
+                      ? 'bg-slate-800 text-amber-300 border border-slate-700/80 shadow-sm font-semibold'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  👨‍👩‍👧 Private / VIP Family
+                  <span>👥</span>
+                  <span>Private / VIP Family</span>
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               <div>
-                <label className="text-slate-400 block mb-1">Client / Delegation Name</label>
+                <label className="text-slate-400 block mb-1.5 font-medium">Client / Delegation Name</label>
                 <input
                   type="text"
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
                 />
               </div>
               <div>
-                <label className="text-slate-400 block mb-1">WhatsApp Direct Contact</label>
+                <label className="text-slate-400 block mb-1.5 font-medium">WhatsApp Direct Contact</label>
                 <input
                   type="text"
                   value={clientPhone}
                   onChange={(e) => setClientPhone(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white font-mono"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono placeholder-slate-500 focus:outline-none focus:border-amber-400"
                 />
               </div>
               <div>
-                <label className="text-slate-400 block mb-1">Party Size (Pax)</label>
+                <label className="text-slate-400 block mb-1.5 font-medium">Party Size (Pax)</label>
                 <input
                   type="number"
                   min={1}
                   max={50}
                   value={groupSize}
                   onChange={(e) => setGroupSize(parseInt(e.target.value) || 1)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white font-mono"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono placeholder-slate-500 focus:outline-none focus:border-amber-400"
                 />
               </div>
               <div>
-                <label className="text-slate-400 block mb-1">Target Date</label>
+                <label className="text-slate-400 block mb-1.5 font-medium">Target Date</label>
                 <input
                   type="date"
                   value={scheduledDate}
                   onChange={(e) => setScheduledDate(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white font-mono"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono placeholder-slate-500 focus:outline-none focus:border-amber-400"
                 />
               </div>
             </div>
           </div>
 
           {/* Step 2: Route Assembly & Spatial Check */}
-          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4.5 space-y-4">
+          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 space-y-5">
             <div className="flex items-center justify-between border-b border-slate-800 pb-2">
               <div>
                 <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
@@ -385,11 +391,11 @@ export default function BespokeCuratorStudioPage() {
         </div>
 
         {/* RIGHT COLUMN: AI AMBASSADOR MATCH, COMMERCIALS & DISPATCH (5 cols) */}
-        <div className="lg:col-span-5 space-y-5">
+        <div className="lg:col-span-5 space-y-6">
           
           {/* AI Ambassador Match Card */}
-          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4.5 space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-amber-400" />
                 AI Ambassador Match & Recommendation
@@ -431,8 +437,8 @@ export default function BespokeCuratorStudioPage() {
           </div>
 
           {/* Commercials & GST Financial Breakdown */}
-          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4.5 space-y-3">
-            <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
+          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 space-y-4">
+            <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-3">
               <DollarSign className="w-4 h-4 text-emerald-400" />
               Custom Proposal Commercials & GST Split
             </span>

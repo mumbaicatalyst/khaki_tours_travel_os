@@ -264,30 +264,28 @@ export default function ToursManagerPage() {
           <div className="p-12 text-center text-xs text-slate-400">Loading master tours catalog...</div>
         ) : (
           <div>
-            <div className="px-4 py-2 bg-slate-950/70 border-b border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-              <span className="font-medium text-slate-300">Experiences Directory ({filteredTours.length})</span>
-              <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1">
-                Scroll horizontally for all fields &rarr;
-              </span>
+            <div className="px-4 py-2.5 bg-slate-950/70 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400">
+              <span className="font-semibold text-slate-200">Experiences Directory ({filteredTours.length})</span>
+              <span className="text-[11px] text-slate-500 font-mono">Live catalog database</span>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[960px] text-left text-xs">
+            <div className="visible-table-scrollbar">
+              <table className="w-full text-left text-xs">
                 <thead className="bg-slate-950/90 border-b border-slate-800 text-slate-400 uppercase font-semibold text-[10px] tracking-wider">
                   <tr>
-                    <th className="p-3.5 w-[340px]">Experience & Code</th>
-                    <th className="p-3.5 w-[140px]">Category</th>
-                    <th className="p-3.5 w-[110px]">Base Price</th>
-                    <th className="p-3.5 w-[100px]">Duration</th>
-                    <th className="p-3.5 w-[90px]">Max Pax</th>
-                    <th className="p-3.5 min-w-[160px]">Starting Landmark</th>
-                    <th className="p-3.5 w-[90px] text-right">Actions</th>
+                    <th className="p-3.5 min-w-[200px] max-w-[280px]">Experience & Code</th>
+                    <th className="p-3.5 w-[115px]">Category</th>
+                    <th className="p-3.5 w-[90px]">Base Price</th>
+                    <th className="p-3.5 w-[85px]">Duration</th>
+                    <th className="p-3.5 w-[80px]">Max Pax</th>
+                    <th className="p-3.5 min-w-[140px] max-w-[180px]">Starting Landmark</th>
+                    <th className="p-3.5 w-[75px] text-right sticky right-0 bg-slate-950/95 sm:bg-transparent shadow-[-4px_0_8px_rgba(0,0,0,0.4)] sm:shadow-none z-10">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 text-slate-300">
                   {filteredTours.map((t) => (
                     <tr key={t.id} className="hover:bg-slate-800/30 transition">
-                      <td className="p-3.5 max-w-[340px]">
+                      <td className="p-3.5 max-w-[280px]">
                         <div className="font-bold text-white text-xs truncate" title={t.title}>{t.title}</div>
                         <div className="text-[11px] text-amber-400 font-mono flex items-center gap-2 mt-0.5">
                           <span>{t.hashtag}</span>
@@ -295,7 +293,7 @@ export default function ToursManagerPage() {
                           <span className="text-slate-500">{t.tour_code}</span>
                         </div>
                       </td>
-                      <td className="p-3.5">
+                      <td className="p-3.5 w-[115px]">
                         <span
                           className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                             t.category === 'STANDARD_WALK'
@@ -305,19 +303,23 @@ export default function ToursManagerPage() {
                               : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
                           }`}
                         >
-                          {t.category}
+                          {t.category === 'STANDARD_WALK'
+                            ? 'Scheduled'
+                            : t.category === 'PRIVATE_GROUP'
+                            ? 'Private'
+                            : 'International'}
                         </span>
                       </td>
-                      <td className="p-3.5 font-bold text-emerald-400 text-xs">
+                      <td className="p-3.5 w-[90px] font-bold text-emerald-400 text-xs">
                         ₹{t.base_price_inr.toLocaleString('en-IN')}
                       </td>
-                      <td className="p-3.5 text-slate-300">{t.duration || '2.5 Hours'}</td>
-                      <td className="p-3.5 font-semibold text-slate-300">{t.max_capacity} Seats</td>
-                      <td className="p-3.5 text-slate-400 max-w-[200px] truncate" title={t.meeting_landmark || 'South Mumbai'}>
+                      <td className="p-3.5 w-[85px] text-slate-300">{t.duration || '2.5 Hours'}</td>
+                      <td className="p-3.5 w-[80px] font-semibold text-slate-300">{t.max_capacity} Seats</td>
+                      <td className="p-3.5 max-w-[180px] truncate text-slate-400" title={t.meeting_landmark || 'South Mumbai'}>
                         {t.meeting_landmark || 'South Mumbai'}
                       </td>
-                      <td className="p-3.5 text-right">
-                        <div className="flex items-center justify-end gap-1">
+                      <td className="p-3.5 w-[75px] text-right sticky right-0 bg-slate-950/95 sm:bg-transparent shadow-[-4px_0_8px_rgba(0,0,0,0.4)] sm:shadow-none z-10">
+                        <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => openEditModal(t)}
                             className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition"
