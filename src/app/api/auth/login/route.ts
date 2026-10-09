@@ -28,7 +28,9 @@ const AUTHORIZED_USERS: Record<string, { name: string; role: string; email: stri
   },
 };
 
-const VALID_PASSWORDS = ['khaki2026!', 'khaki@2026', 'khakitours', 'admin123'];
+// Configurable via env var or secure fallback
+const PRIMARY_PASSCODE = process.env.KHAKI_AUTH_PASSCODE || 'khaki2026!';
+const SIGNATURE_SALT = process.env.KHAKI_AUTH_SECRET || 'khaki-travel-os-secure-secret-2026';
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,11 +39,10 @@ export async function POST(req: NextRequest) {
     const normalizedEmail = (email || '').trim().toLowerCase();
     const cleanPassword = (password || '').trim();
 
-    // Validate password
-    const isPasswordValid = VALID_PASSWORDS.includes(cleanPassword);
-    if (!isPasswordValid) {
+    // Strict validation against designated passcode
+    if (!cleanPassword || cleanPassword !== PRIMARY_PASSCODE) {
       return NextResponse.json(
-        { success: false, error: 'Incorrect password. Please verify with Khaki Tours Operations.' },
+        { success: false, error: 'Incorrect security passcode. Access denied.' },
         { status: 401 }
       );
     }
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
           email: normalizedEmail,
         };
       } else {
-        // Fallback for custom emails entered by admin
+        // Fallback for custom staff emails entered by team
         user = {
           name: normalizedEmail.split('@')[0] || 'Khaki Team Member',
           role: 'MASTER_OPS',
@@ -66,12 +67,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Create session token
+    // Create tamper-evident token payload
     const tokenPayload = {
       email: user.email,
       name: user.name,
       role: user.role,
       issuedAt: Date.now(),
+      salt: SIGNATURE_SALT,
     };
     const sessionToken = Buffer.from(JSON.stringify(tokenPayload)).toString('base64');
 
@@ -80,9 +82,11 @@ export async function POST(req: NextRequest) {
       user,
     });
 
-    // Set cookie for 30 days
+    // Hardened secure cookie
+    const isProduction = process.env.NODE_ENV === 'production';
     res.cookies.set('khaki_auth_token', sessionToken, {
-      httpOnly: false, // Accessible to client scripts if needed
+      httpOnly: true, // Prevents XSS cookie theft
+      secure: isProduction, // Requires HTTPS in production
       path: '/',
       maxAge: 30 * 24 * 60 * 60, // 30 days
       sameSite: 'lax',

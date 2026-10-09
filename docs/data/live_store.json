@@ -4277,10 +4277,11 @@
       "last_message_text": "🔒 *SEATS RESERVED (30-MIN HOLD)*\n\nDear Charlotte Weber,\nWe have held 2 seats for you on Saturday's departure (#DurgasOf Mumbai).\n\nPlease complete advance payment within 30 minutes to confirm your tickets:\n👉 https://khakitours.com/pay/hold-sat-4593",
       "last_message_at": "2026-10-09T05:37:54.989Z",
       "last_sender": "HUMAN",
-      "human_takeover": false,
+      "human_takeover": true,
       "unread_count": 1,
       "inbound_stream": "INTERNATIONAL",
-      "priority_tier": "P1_HOT_LEAD"
+      "priority_tier": "P1_HOT_LEAD",
+      "assigned_staff": "Kaevan Umrigar (Growth Lead)"
     },
     {
       "id": "conv_",
