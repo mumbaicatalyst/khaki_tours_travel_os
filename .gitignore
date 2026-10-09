@@ -29,7 +29,9 @@
 *.tsbuildinfo
 next-env.d.ts
 
+# Netlify
+.netlify/
+
 # Binaries and Standalone Local Services
 /bin/
 /integrations/wacrm/
-

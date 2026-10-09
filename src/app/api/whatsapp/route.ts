@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
         text: textToSend,
         messageId: result.messageId,
         status: result.success ? 'DELIVERED' : 'FAILED',
+        metadata: result.error ? { error: result.error } : undefined,
       });
 
       return NextResponse.json({

@@ -16,7 +16,8 @@ interface ChatMessage {
   sender: 'GUEST' | 'BOT' | 'HUMAN';
   text: string;
   timestamp: string;
-  status?: 'SENT' | 'DELIVERED' | 'READ';
+  status?: 'SENT' | 'DELIVERED' | 'READ' | 'FAILED';
+  error?: string;
   isLocationPin?: boolean;
   isTemplate?: boolean;
 }
@@ -355,7 +356,7 @@ export default function UnifiedInboxPage() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // 1. Poll real-time conversations list
+  // 1. Poll real-time conversations list with robust client-server deduplication
   const syncConversationList = async () => {
     try {
       const res = await fetch('/api/inbox/conversations');
@@ -369,12 +370,27 @@ export default function UnifiedInboxPage() {
             const existing = prevMap.get(clean);
             if (!existing) return serverConv;
 
-            const existingIds = new Set(existing.messages.map((m: any) => m.id));
-            const newMsgs = (serverConv.messages || []).filter((m: any) => !existingIds.has(m.id));
+            // Robust deduplication:
+            // 1. Canonical messages from server
+            const serverMsgs: ChatMessage[] = serverConv.messages || [];
+            const serverIds = new Set(serverMsgs.map((m: any) => m.id));
+
+            // 2. Retain client messages only if pending (not yet confirmed on server)
+            const pendingClientMsgs = existing.messages.filter((cm) => {
+              if (serverIds.has(cm.id)) return false;
+              // Check if server already has an identical message (same sender and text)
+              const matchedOnServer = serverMsgs.some(
+                (sm) => sm.sender === cm.sender && sm.text.trim() === cm.text.trim()
+              );
+              return !matchedOnServer;
+            });
+
+            // 3. Merged list guarantees no duplicates
+            const mergedMessages = [...serverMsgs, ...pendingClientMsgs];
 
             return {
               ...serverConv,
-              messages: [...existing.messages, ...newMsgs],
+              messages: mergedMessages,
               humanTakeover: serverConv.humanTakeover !== undefined ? serverConv.humanTakeover : existing.humanTakeover,
               assignedStaff: serverConv.assignedStaff || existing.assignedStaff,
               inboundStream: serverConv.inboundStream || existing.inboundStream,
@@ -519,15 +535,16 @@ export default function UnifiedInboxPage() {
     if (!replyText.trim() || !activeSession) return;
 
     const textToSend = replyText.trim();
+    const tempId = `m_${Date.now()}`;
     setReplyText('');
     setIsSending(true);
 
     const newMsg: ChatMessage = {
-      id: `m_${Date.now()}`,
+      id: tempId,
       sender: 'HUMAN',
       text: textToSend,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      status: 'DELIVERED',
+      status: 'SENT',
     };
 
     setSessions((prev) =>
@@ -546,7 +563,7 @@ export default function UnifiedInboxPage() {
     );
 
     try {
-      await fetch('/api/whatsapp', {
+      const res = await fetch('/api/whatsapp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -554,8 +571,61 @@ export default function UnifiedInboxPage() {
           message: textToSend,
         }),
       });
-    } catch {
-      // Mock fallback
+
+      const data = await res.json();
+
+      if (data.success) {
+        // Reconcile optimistic ID with canonical server/Meta messageId
+        setSessions((prev) =>
+          prev.map((s) =>
+            s.id === activeSession.id
+              ? {
+                  ...s,
+                  messages: s.messages.map((m) =>
+                    m.id === tempId ? { ...m, id: data.messageId || tempId, status: 'DELIVERED' } : m
+                  ),
+                }
+              : s
+          )
+        );
+      } else {
+        const errMsg = data.error || 'Failed to dispatch WhatsApp message';
+        const isAllowedListError = errMsg.includes('131030');
+        const alertNotice = isAllowedListError
+          ? `⚠️ Meta Sandbox: Recipient not in allowed list. Add ${activeSession.phone} to Meta App Dashboard -> WhatsApp -> API Setup -> To list.`
+          : `❌ WhatsApp Delivery Failed: ${errMsg}`;
+
+        setActionNotice(alertNotice);
+        setTimeout(() => setActionNotice(null), 10000);
+
+        setSessions((prev) =>
+          prev.map((s) =>
+            s.id === activeSession.id
+              ? {
+                  ...s,
+                  messages: s.messages.map((m) =>
+                    m.id === tempId ? { ...m, status: 'FAILED', error: errMsg } : m
+                  ),
+                }
+              : s
+          )
+        );
+      }
+    } catch (err: any) {
+      setActionNotice(`❌ Network error sending WhatsApp: ${err.message}`);
+      setTimeout(() => setActionNotice(null), 6000);
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.id === activeSession.id
+            ? {
+                ...s,
+                messages: s.messages.map((m) =>
+                  m.id === tempId ? { ...m, status: 'FAILED', error: err.message } : m
+                ),
+              }
+            : s
+        )
+      );
     } finally {
       setIsSending(false);
     }
@@ -575,12 +645,13 @@ export default function UnifiedInboxPage() {
       sentText = `📄 *KHAKI TOURS B2B RETREAT PROPOSAL*\n\nDear ${activeSession.customerName},\nWe have prepared your customized heritage offsite proposal with 18% GST (SAC 998554).\n\nReview & Approve: https://khakitours.com/b2b-proposal/KT-${Date.now().toString().slice(-4)}`;
     }
 
+    const tempId = `m_tmpl_${Date.now()}`;
     const newMsg: ChatMessage = {
-      id: `m_tmpl_${Date.now()}`,
+      id: tempId,
       sender: 'HUMAN',
       text: sentText,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      status: 'DELIVERED',
+      status: 'SENT',
       isLocationPin: isLoc,
       isTemplate: true,
     };
@@ -603,7 +674,41 @@ export default function UnifiedInboxPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ to: activeSession.phone, message: sentText }),
-    }).catch(() => {});
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (data.success) {
+          setSessions((prev) =>
+            prev.map((s) =>
+              s.id === activeSession.id
+                ? {
+                    ...s,
+                    messages: s.messages.map((m) =>
+                      m.id === tempId ? { ...m, id: data.messageId || tempId, status: 'DELIVERED' } : m
+                    ),
+                  }
+                : s
+            )
+          );
+        } else {
+          const errMsg = data.error || 'Failed to deliver template';
+          setActionNotice(`❌ Template delivery failed: ${errMsg}`);
+          setTimeout(() => setActionNotice(null), 8000);
+          setSessions((prev) =>
+            prev.map((s) =>
+              s.id === activeSession.id
+                ? {
+                    ...s,
+                    messages: s.messages.map((m) =>
+                      m.id === tempId ? { ...m, status: 'FAILED', error: errMsg } : m
+                    ),
+                  }
+                : s
+            )
+          );
+        }
+      })
+      .catch(() => {});
 
     if (templateType === 'CONFIRMATION') {
       fetch('/api/bookings', {
@@ -1056,11 +1161,38 @@ export default function UnifiedInboxPage() {
                       </span>
                       <span className="text-slate-500 font-mono text-[9px] flex items-center gap-1">
                         {m.timestamp}
-                        {m.sender !== 'GUEST' && <CheckCheck className="w-3 h-3 text-emerald-400" />}
+                        {m.sender !== 'GUEST' && (
+                          m.status === 'FAILED' ? (
+                            <span className="text-rose-400 font-sans flex items-center gap-0.5 text-[9px] font-semibold bg-rose-950/80 px-1 py-0.5 rounded border border-rose-800/60">
+                              <AlertTriangle className="w-2.5 h-2.5 text-rose-400" /> Undelivered
+                            </span>
+                          ) : m.status === 'SENT' ? (
+                            <Clock className="w-3 h-3 text-slate-400" />
+                          ) : (
+                            <CheckCheck className="w-3 h-3 text-emerald-400" />
+                          )
+                        )}
                       </span>
                     </div>
 
                     <p className="whitespace-pre-wrap leading-relaxed">{m.text}</p>
+
+                    {m.status === 'FAILED' && m.error && (
+                      <div className="mt-2 bg-rose-950/70 p-2 rounded-lg border border-rose-900/60 text-[10.5px] text-rose-300 font-sans space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-rose-200">
+                          <AlertTriangle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                          Delivery Blocked by Meta API
+                        </div>
+                        <div className="text-[9.5px] text-rose-300/90 leading-tight">
+                          {m.error}
+                        </div>
+                        {m.error.includes('131030') && (
+                          <div className="text-[9px] text-amber-300/95 bg-amber-950/50 p-1.5 rounded border border-amber-900/40 mt-1">
+                            💡 <strong>Meta Test Sandbox:</strong> Add this phone number to the allowed recipient list in Meta App Dashboard (WhatsApp → API Setup → To list).
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {m.isLocationPin && (
                       <div className="mt-2 bg-slate-950/80 p-2 rounded-lg border border-slate-800 flex items-center justify-between text-[11px] text-amber-400">

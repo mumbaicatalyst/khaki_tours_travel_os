@@ -233,6 +233,7 @@ export async function GET(req: NextRequest) {
           text: m.text,
           timestamp: new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           status: m.status || 'DELIVERED',
+          error: m.metadata?.error || m.error,
           isLocationPin: Boolean(m.isLocationPin),
         })),
       });
@@ -271,6 +272,7 @@ export async function GET(req: NextRequest) {
             text: m.text,
             timestamp: new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             status: m.status || 'DELIVERED',
+            error: m.metadata?.error || m.error,
             isLocationPin: Boolean(m.isLocationPin),
           })),
         });

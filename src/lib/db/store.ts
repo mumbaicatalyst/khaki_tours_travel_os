@@ -673,6 +673,32 @@ class PersistentStore {
     if (!this.data.whatsappMessages) this.data.whatsappMessages = [];
 
     const cleanPhone = payload.phone.replace(/[^0-9]/g, '');
+
+    // 1. Guard against duplicate messageId if already stored
+    if (payload.messageId) {
+      const existing = this.data.whatsappMessages.find((m: any) => m.id === payload.messageId);
+      if (existing) {
+        if (payload.status) existing.status = payload.status;
+        if (payload.metadata) existing.metadata = { ...existing.metadata, ...payload.metadata };
+        return existing;
+      }
+    }
+
+    // 2. Guard against rapid identical outbound/inbound dispatch within 4 seconds
+    const recentDuplicate = this.data.whatsappMessages.find(
+      (m: any) =>
+        m.phone.replace(/[^0-9]/g, '') === cleanPhone &&
+        m.sender === payload.sender &&
+        m.text === payload.text &&
+        Date.now() - new Date(m.timestamp).getTime() < 4000
+    );
+    if (recentDuplicate) {
+      if (payload.messageId) recentDuplicate.id = payload.messageId;
+      if (payload.status) recentDuplicate.status = payload.status;
+      if (payload.metadata) recentDuplicate.metadata = { ...recentDuplicate.metadata, ...payload.metadata };
+      return recentDuplicate;
+    }
+
     const newMsg = {
       id: payload.messageId || `wam_${Date.now()}_${Math.random().toString(36).substring(7)}`,
       phone: payload.phone,

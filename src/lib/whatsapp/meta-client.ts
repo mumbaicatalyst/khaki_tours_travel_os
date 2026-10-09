@@ -61,15 +61,31 @@ export class MetaWhatsAppClient {
     this.wabaId = process.env.WHATSAPP_BUSINESS_ACCOUNT_ID || process.env.WHATSAPP_WABA_ID || '';
   }
 
+  private getPhoneNumberId(): string {
+    return process.env.WHATSAPP_PHONE_NUMBER_ID || this.phoneNumberId || '';
+  }
+
+  private getAccessToken(): string {
+    return process.env.WHATSAPP_ACCESS_TOKEN || process.env.WHATSAPP_API_TOKEN || this.accessToken || '';
+  }
+
   public isConfigured(): boolean {
-    return Boolean(this.phoneNumberId && this.accessToken);
+    return Boolean(this.getPhoneNumberId() && this.getAccessToken());
   }
 
   /**
    * Format phone number to international E.164 without leading +
    */
   private cleanPhone(phone: string): string {
-    return phone.replace(/[^0-9]/g, '');
+    let digits = phone.replace(/[^0-9]/g, '');
+    if (digits.length === 10) {
+      // Default Indian 10-digit mobile number to include +91 country code
+      digits = `91${digits}`;
+    } else if (digits.length === 11 && digits.startsWith('0')) {
+      // Indian number entered with leading 0 (e.g. 09820088712)
+      digits = `91${digits.slice(1)}`;
+    }
+    return digits;
   }
 
   /**
@@ -251,12 +267,12 @@ export class MetaWhatsAppClient {
     if (!this.isConfigured() || messageId.startsWith('mock_')) return true;
 
     try {
-      const url = `${META_API_BASE}/${this.phoneNumberId}/messages`;
+      const url = `${META_API_BASE}/${this.getPhoneNumberId()}/messages`;
       await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.accessToken}`,
+          Authorization: `Bearer ${this.getAccessToken()}`,
         },
         body: JSON.stringify({
           messaging_product: 'whatsapp',
@@ -274,14 +290,16 @@ export class MetaWhatsAppClient {
    * Internal HTTP Poster to Meta Graph API
    */
   private async postToMeta(body: any): Promise<MetaApiResponse> {
-    const url = `${META_API_BASE}/${this.phoneNumberId}/messages`;
+    const phoneNumberId = this.getPhoneNumberId();
+    const accessToken = this.getAccessToken();
+    const url = `${META_API_BASE}/${phoneNumberId}/messages`;
 
     try {
       const res = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(body),
       });
