@@ -650,7 +650,7 @@ export default function UnifiedInboxPage() {
     let isLoc = false;
 
     if (templateType === 'CONFIRMATION') {
-      sentText = `🏛️ *KHAKI TOURS BOOKING CONFIRMATION*\n\nNamaste ${activeSession.customerName}!\nYour booking for *${activeSession.tourName}* is confirmed.\n• SAC Code: ${activeSession.taxSacCode} (${activeSession.gstRate} GST)\n• Total Amount Paid: ₹${(activeSession.lifetimeSpendInr).toLocaleString('en-IN')}\n\nYour guide contact will be shared 24h prior to departure. See you on the trail!`;
+      sentText = `🏛️ *KHAKI TOURS BOOKING CONFIRMATION*\n\nHello ${activeSession.customerName}! 👋\nYour booking for *${activeSession.tourName}* is confirmed.\n• SAC Code: ${activeSession.taxSacCode} (${activeSession.gstRate} GST)\n• Total Amount Paid: ₹${(activeSession.lifetimeSpendInr).toLocaleString('en-IN')}\n\nYour Khaki Heritage Ambassador contact details will be shared 24h prior to departure. See you on the trail!`;
     } else if (templateType === 'LOCATION_PIN') {
       sentText = `📍 *MEETING LANDMARK & DIRECTIONS*\n\nAssemble at: *Horniman Circle Steps, Fort, Mumbai*\nGoogle Maps Navigation Pin: https://maps.google.com/?q=Horniman+Circle+Mumbai\nReporting Time: 15 minutes before slot.`;
       isLoc = true;

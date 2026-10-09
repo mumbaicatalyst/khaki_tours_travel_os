@@ -18,12 +18,13 @@ export class IntakeEngine {
       return { success: false, bookingReference };
     }
 
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://khakitours-travel-os.netlify.app';
     const messageBody = `Hello ${payload.caller_name || 'there'}! 👋\n\n` +
       `Thank you for speaking with our Khaki Tours team. As discussed on your call, here is your booking request:\n\n` +
       `• *Ref:* ${bookingReference}\n` +
       `• *Party Size:* ${payload.group_size} Guest(s)\n\n` +
       `Please tap below to review the tour highlights and secure your booking:\n` +
-      `https://os.khakitours.com/booking/${bookingReference}\n\n` +
+      `${siteUrl}/bookings\n\n` +
       `_Reply to this chat anytime if you have any questions!_`;
 
     const res = await whatsappClient.sendTextMessage({

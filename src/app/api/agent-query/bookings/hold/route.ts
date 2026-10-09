@@ -50,7 +50,8 @@ export async function POST(req: NextRequest) {
 
     const bookingRef = `KT-HLD-${Date.now().toString().slice(-6)}`;
     const expiresAt = new Date(Date.now() + decision.paymentLinkExpiryMinutes * 60 * 1000).toISOString();
-    const paymentUrl = `https://os.khakitours.com/pay/${bookingRef}?amt=${totalAmountInr}`;
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://khakitours-travel-os.netlify.app';
+    const paymentUrl = `${siteUrl}/bookings?hold=${bookingRef}&amt=${totalAmountInr}`;
 
     // Optionally dispatch WhatsApp interactive payment prompt
     let whatsappMessageId: string | undefined;
@@ -58,15 +59,15 @@ export async function POST(req: NextRequest) {
       const waPrompt = await whatsappClient.sendTextMessage({
         to: phone_number,
         body:
-          `Namaste ${full_name}! 🙏\n\n` +
+          `Hello ${full_name}! 👋\n\n` +
           `Your seats for *${matchedTour?.title || 'Mumbai Heritage Walk'}* are temporarily held.\n\n` +
           `• *Booking Reference:* ${bookingRef}\n` +
           `• *Party Size:* ${group_size} Guest(s)\n` +
           `• *Total Payable:* ₹${totalAmountInr.toLocaleString('en-IN')} (incl. taxes)\n` +
           `• *Hold Expires In:* ${decision.paymentLinkExpiryMinutes} minutes\n\n` +
-          `Tap below to complete instant UPI payment and secure your digital ticket:\n` +
+          `Tap below to complete instant payment and secure your digital ticket:\n` +
           `${paymentUrl}\n\n` +
-          `_Map pin and host contact will be sent immediately upon confirmation._`,
+          `_Map pin and host contact will be sent immediately upon payment confirmation._`,
       });
       whatsappMessageId = waPrompt.messageId;
     }
