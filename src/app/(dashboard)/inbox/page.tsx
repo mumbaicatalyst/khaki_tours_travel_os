@@ -66,8 +66,9 @@ const STREAM_CONFIG = {
 };
 
 const STAFF_LIST = [
-  'Bharat Gothoskar (Founder)',
-  'Priya S. (Frontline Lead)',
+  'Bharat Gothoskar (Founder & CEO)',
+  'Priya S. (Ops Lead)',
+  'Kaevan Umrigar (Growth Lead)',
   'Farhan K. (Field Dispatcher)',
   'C.A. Mehta & Associates',
   'Unassigned',
@@ -674,7 +675,7 @@ export default function UnifiedInboxPage() {
           status: 'LEAD_NEW',
           priorityTier: json.data.tier as LeadPriorityTier,
           inboundStream: isCorp ? 'CORPORATE_VIP' : 'PRIVATE_TOUR',
-          assignedStaff: json.data.assignedRole === 'BHARAT_FOUNDER' ? 'Bharat Gothoskar (Founder)' : 'Priya S. (Frontline Lead)',
+          assignedStaff: json.data.assignedRole === 'BHARAT_FOUNDER' ? 'Bharat Gothoskar (Founder & CEO)' : 'Priya S. (Ops Lead)',
           slaMinutes: json.data.slaResponseMinutes || 15,
           minutesElapsed: 1,
           lifetimeSpendInr: isCorp ? 75000 : 2500,

@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type UserRole = 'MASTER_OPS' | 'GUEST_CONCIERGE' | 'FIELD_DISPATCH' | 'FINANCE_TALLY';
+export type UserRole = 'MASTER_OPS' | 'GUEST_CONCIERGE' | 'MARKETING_GROWTH' | 'FIELD_DISPATCH' | 'FINANCE_TALLY';
 
 export interface RoleConfig {
   id: UserRole;
@@ -30,14 +30,25 @@ export const ROLE_CONFIGS: Record<UserRole, RoleConfig> = {
   },
   GUEST_CONCIERGE: {
     id: 'GUEST_CONCIERGE',
-    label: 'Guest Experience & Inbound SLA Desk',
-    shortTitle: 'Guest Desk',
-    userName: 'Priya S. (Lead Concierge)',
-    avatarBadge: '📥',
+    label: 'Operations & Guest SLA Desk',
+    shortTitle: 'Ops Desk',
+    userName: 'Priya S. (Ops Lead)',
+    avatarBadge: '⚡',
     description: 'WhatsApp live conversations, 15-min SLA response, guest CRM & 1-click booking passes.',
     primaryModules: ['inbox', 'customers', 'marketing', 'bookings', 'bespoke'],
     headerActionLabel: '+ Guest Pass',
     headerActionHref: '/inbox',
+  },
+  MARKETING_GROWTH: {
+    id: 'MARKETING_GROWTH',
+    label: 'Marketing, Campaigns & Growth Desk',
+    shortTitle: 'Growth Desk',
+    userName: 'Kaevan Umrigar (Marketing & Growth Lead)',
+    avatarBadge: '🚀',
+    description: 'WhatsApp broadcast blasts, Meta & Google Ads acquisition, promo code yields & CRM segments.',
+    primaryModules: ['dashboard', 'marketing', 'customers', 'bookings', 'schedule', 'tours', 'analytics'],
+    headerActionLabel: '+ Launch Campaign',
+    headerActionHref: '/marketing',
   },
   FIELD_DISPATCH: {
     id: 'FIELD_DISPATCH',

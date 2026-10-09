@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { 
   Send, Users, Mail, MessageSquare, Instagram, Star, Sparkles, 
   DollarSign, ArrowUpRight, CheckCircle2, AlertCircle, RefreshCw, 
-  Search, ShieldCheck, ChevronRight, BarChart2, Compass, Globe
+  Search, ShieldCheck, ChevronRight, BarChart2, Compass, Globe,
+  TrendingUp, Tag, Percent, MousePointerClick, AlertTriangle, Layers, Award
 } from 'lucide-react';
 
 export default function MarketingCampaignsPage() {
-  const [activeTab, setActiveTab] = useState<'BROADCAST_COMPOSER' | 'CROSS_SELL' | 'REVIEWS' | 'INSTAGRAM_LEADS'>('BROADCAST_COMPOSER');
+  const [activeTab, setActiveTab] = useState<'BROADCAST_COMPOSER' | 'CROSS_SELL' | 'REVIEWS' | 'DIGITAL_ADS_ATTRIBUTION'>('BROADCAST_COMPOSER');
   const [audiences, setAudiences] = useState<any>({
     total_contacts: 18,
     repeat_walkers: 6,
@@ -30,21 +31,21 @@ export default function MarketingCampaignsPage() {
     setPromoDiscount(discount);
     if (discount === 'DISCOUNT_5') {
       setCustomMessage((prev) => {
-        const cleaned = prev.replace(/\n\n🎁 .*$/s, '');
+        const cleaned = prev.split('\n\n🎁')[0];
         return `${cleaned}\n\n🎁 Exclusive Courtesy: Use promo code REPEAT05 for 5% off your reservation.`;
       });
     } else if (discount === 'DISCOUNT_10') {
       setCustomMessage((prev) => {
-        const cleaned = prev.replace(/\n\n🎁 .*$/s, '');
+        const cleaned = prev.split('\n\n🎁')[0];
         return `${cleaned}\n\n🎁 Special Offer: Use promo code KHAKI10 for 10% off your booking.`;
       });
     } else if (discount === 'DISCOUNT_15') {
       setCustomMessage((prev) => {
-        const cleaned = prev.replace(/\n\n🎁 .*$/s, '');
+        const cleaned = prev.split('\n\n🎁')[0];
         return `${cleaned}\n\n🎁 VIP Perk: Use promo code ALUMNI15 for 15% off as an honored patron.`;
       });
     } else {
-      setCustomMessage((prev) => prev.replace(/\n\n🎁 .*$/s, ''));
+      setCustomMessage((prev) => prev.split('\n\n🎁')[0]);
     }
   };
 
@@ -53,6 +54,43 @@ export default function MarketingCampaignsPage() {
 
   // Review Collector State
   const [reviewTriggering, setReviewTriggering] = useState(false);
+
+  // Low Occupancy Departures List
+  const lowOccupancyDepartures = [
+    {
+      id: 'dep_fort_01',
+      tourName: '#FortWalk: Colonial Bombay & Zero Point',
+      date: 'Saturday, 4:00 PM',
+      guide: 'Farhan K.',
+      bookedSeats: 6,
+      totalSeats: 20,
+      occupancyPct: 30,
+      ticketPrice: 1500,
+    },
+    {
+      id: 'dep_safari_02',
+      tourName: 'Urban Safari: Open Jeep Heritage Route',
+      date: 'Sunday, 6:30 AM',
+      guide: 'Priya S.',
+      bookedSeats: 3,
+      totalSeats: 10,
+      occupancyPct: 30,
+      ticketPrice: 3500,
+    },
+  ];
+
+  const handleBoostDeparture = (dep: typeof lowOccupancyDepartures[0]) => {
+    setCampaignName(`Flash Seat Boost: ${dep.tourName} (${dep.date})`);
+    setSelectedChannel('WHATSAPP_BROADCAST');
+    setTargetSegment('REPEAT_WALKERS');
+    setPromoDiscount('DISCOUNT_10');
+    setCustomMessage(
+      `Namaste {{name}}! 🏛️\n\nOnly ${dep.totalSeats - dep.bookedSeats} exclusive seats remain for our upcoming *${dep.tourName}* on ${dep.date}.\n\nLed by our Senior Heritage Ambassador (${dep.guide}).\n\nAs a valued Khaki explorer, use flash promo code *KHAKI10* for 10% off your booking:\nhttps://khakitours.com/book\n\nSee you on the heritage trail!`
+    );
+    setActiveTab('BROADCAST_COMPOSER');
+    setNotification(`⚡ Flash broadcast pre-configured for ${dep.tourName} with promo code KHAKI10!`);
+    setTimeout(() => setNotification(null), 5000);
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -131,11 +169,11 @@ export default function MarketingCampaignsPage() {
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
             <Send className="w-6 h-6 text-amber-400" />
-            Outbound Marketing & Campaign Studio
+            Marketing, Campaigns & Growth Studio
           </h1>
           <p className="text-xs text-slate-400 max-w-3xl mt-1">
-            Targeted WhatsApp broadcasts, cross-selling Mumbai walking alumni to international expeditions, 
-            automated post-tour Google Review triggers, and Meta marketing budget guardrails.
+            Managed by Kaevan Umrigar (Growth Lead). Targeted WhatsApp broadcasts, Google Search & Meta Instagram ad attribution, 
+            low-occupancy departure seat boosts, and automated post-tour Google Review collectors.
           </p>
         </div>
 
@@ -169,9 +207,9 @@ export default function MarketingCampaignsPage() {
         </div>
 
         <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4">
-          <span className="text-[10px] text-slate-400 uppercase font-mono block">Email Campaign Benchmark</span>
-          <span className="text-2xl font-bold text-amber-400 font-mono">15.2% Open Rate</span>
-          <span className="text-[11px] text-slate-400 block mt-1">3.4% Click-through &bull; Historical Baseline</span>
+          <span className="text-[10px] text-slate-400 uppercase font-mono block">Paid Ads Blended ROAS</span>
+          <span className="text-2xl font-bold text-amber-400 font-mono">4.52x ROAS</span>
+          <span className="text-[11px] text-slate-400 block mt-1">Google Search (4.9x) &bull; Meta IG (3.9x)</span>
         </div>
 
         <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4">
@@ -187,6 +225,64 @@ export default function MarketingCampaignsPage() {
         </div>
       </div>
 
+      {/* Smart Low-Occupancy Departure Alert Widget */}
+      <div className="bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-900 border border-amber-500/30 rounded-xl p-4 shadow-lg">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-amber-500/20 text-amber-400 shrink-0 mt-0.5">
+              <AlertTriangle className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-amber-300 uppercase tracking-wide">
+                  Low Occupancy Departure Alert (&lt; 40% Booked)
+                </span>
+                <span className="px-2 py-0.5 rounded text-[10px] bg-amber-500/10 text-amber-300 border border-amber-500/20 font-bold">
+                  2 Departures Need Seat Boost
+                </span>
+              </div>
+              <p className="text-xs text-slate-300 mt-1">
+                Trigger a 1-click targeted WhatsApp broadcast with 10% promo code <code className="text-amber-400 font-bold">KHAKI10</code> to past repeat walkers in South Mumbai.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 pt-3 border-t border-slate-800/80">
+          {lowOccupancyDepartures.map((dep) => (
+            <div key={dep.id} className="bg-slate-950/80 border border-slate-800 rounded-lg p-3 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="font-bold text-xs text-white truncate">{dep.tourName}</div>
+                <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
+                  <span>{dep.date}</span>
+                  <span>&bull;</span>
+                  <span>Lead: {dep.guide}</span>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="w-24 bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                    <div 
+                      className="bg-amber-400 h-full rounded-full" 
+                      style={{ width: `${dep.occupancyPct}%` }}
+                    />
+                  </div>
+                  <span className="text-[10px] text-amber-400 font-mono font-bold">
+                    {dep.bookedSeats}/{dep.totalSeats} seats ({dep.occupancyPct}%)
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => handleBoostDeparture(dep)}
+                className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shrink-0"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                ⚡ Flash Boost (10% Off)
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Navigation Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-2">
         <button
@@ -197,6 +293,16 @@ export default function MarketingCampaignsPage() {
         >
           <MessageSquare className="w-3.5 h-3.5" />
           Campaign Broadcast Composer
+        </button>
+
+        <button
+          onClick={() => setActiveTab('DIGITAL_ADS_ATTRIBUTION')}
+          className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 ${
+            activeTab === 'DIGITAL_ADS_ATTRIBUTION' ? 'bg-blue-600 text-white shadow' : 'bg-slate-900 text-slate-400 hover:text-white'
+          }`}
+        >
+          <Search className="w-3.5 h-3.5" />
+          Google &amp; Meta Paid Ads &amp; Attribution
         </button>
 
         <button
@@ -218,159 +324,495 @@ export default function MarketingCampaignsPage() {
           <Star className="w-3.5 h-3.5" />
           Automated Post-Tour Review Collector
         </button>
-
-        <button
-          onClick={() => setActiveTab('INSTAGRAM_LEADS')}
-          className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 ${
-            activeTab === 'INSTAGRAM_LEADS' ? 'bg-amber-500 text-slate-950' : 'bg-slate-900 text-slate-400 hover:text-white'
-          }`}
-        >
-          <Instagram className="w-3.5 h-3.5" />
-          Instagram Ad Leads & Meta Attribution
-        </button>
       </div>
 
       {/* TAB 1: OUTBOUND BROADCAST COMPOSER (WACRM STYLE) */}
       {activeTab === 'BROADCAST_COMPOSER' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Controls */}
-          <div className="lg:col-span-7 bg-slate-900/50 border border-slate-800 rounded-xl p-5 space-y-4">
-            <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-amber-400" />
-                Targeted Outbound Campaign Builder
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Dispatch personalized marketing announcements. Built with Meta pricing guardrails to prevent budget wastage.
-              </p>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Controls */}
+            <div className="lg:col-span-7 bg-slate-900/50 border border-slate-800 rounded-xl p-5 space-y-4">
+              <div>
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-amber-400" />
+                  Targeted Outbound Campaign Builder
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Dispatch personalized marketing announcements. Built with Meta pricing guardrails to prevent budget wastage.
+                </p>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div>
+                  <label className="text-slate-400 block mb-1">Campaign Title</label>
+                  <input
+                    type="text"
+                    value={campaignName}
+                    onChange={(e) => setCampaignName(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white font-medium"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="text-slate-400 block mb-1">Dispatch Channel</label>
+                    <select
+                      value={selectedChannel}
+                      onChange={(e) => setSelectedChannel(e.target.value as any)}
+                      className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white"
+                    >
+                      <option value="WHATSAPP_BROADCAST">WhatsApp Cloud API (Meta Approved)</option>
+                      <option value="EMAIL_NEWSLETTER">Email Newsletter</option>
+                      <option value="INSTAGRAM_NURTURE">Instagram Direct Message Nurture</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-slate-400 block mb-1">Target Audience Segment</label>
+                    <select
+                      value={targetSegment}
+                      onChange={(e) => setTargetSegment(e.target.value as any)}
+                      className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white"
+                    >
+                      <option value="REPEAT_WALKERS">Repeat Mumbai Walkers (2+ Walks)</option>
+                      <option value="HIGH_LTV_ALUMNI">HNI Walkers (LTV &gt; ₹15,000)</option>
+                      <option value="CORPORATE_VIP">Corporate & B2B Decision Makers</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-slate-400 block mb-1">Promotional Discount Incentive</label>
+                    <select
+                      value={promoDiscount}
+                      onChange={(e) => handleSelectPromoDiscount(e.target.value as any)}
+                      className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white"
+                    >
+                      <option value="NONE">No Discount (Standard Fare)</option>
+                      <option value="DISCOUNT_5">5% Repeat Courtesy (REPEAT05)</option>
+                      <option value="DISCOUNT_10">10% Special Offer (KHAKI10)</option>
+                      <option value="DISCOUNT_15">15% VIP Alumni Perk (ALUMNI15)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-slate-400 block mb-1">
+                    Message Content (Uses &quot;Khaki Heritage Ambassador&quot; for External Guests)
+                  </label>
+                  <textarea
+                    rows={5}
+                    value={customMessage}
+                    onChange={(e) => setCustomMessage(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white font-mono text-xs leading-relaxed"
+                  />
+                  <span className="text-[10px] text-slate-500 mt-1 block">
+                    Tag: <code className="text-amber-400">{'{{name}}'}</code> dynamically replaced with guest&apos;s full name.
+                  </span>
+                </div>
+              </div>
+
+              {/* Meta Rate Guard Card */}
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+                <div>
+                  <span className="text-slate-400 block">Estimated Meta Dispatch Cost:</span>
+                  <span className="text-lg font-bold text-amber-400 font-mono">₹{estimatedCost} INR</span>
+                  <span className="text-[10px] text-slate-500 block mt-0.5">
+                    ({recipientCount} recipients &bull; ₹0.78 Meta Marketing Fee)
+                  </span>
+                </div>
+
+                <button
+                  onClick={handleLaunchCampaign}
+                  disabled={isDispatching}
+                  className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg shadow-lg shadow-amber-500/20 transition flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  <Send className="w-4 h-4" />
+                  {isDispatching ? 'Launching Blast...' : 'Dispatch Broadcast'}
+                </button>
+              </div>
             </div>
 
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="text-slate-400 block mb-1">Campaign Title</label>
-                <input
-                  type="text"
-                  value={campaignName}
-                  onChange={(e) => setCampaignName(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white font-medium"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="text-slate-400 block mb-1">Dispatch Channel</label>
-                  <select
-                    value={selectedChannel}
-                    onChange={(e) => setSelectedChannel(e.target.value as any)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white"
-                  >
-                    <option value="WHATSAPP_BROADCAST">WhatsApp Cloud API (Meta Approved)</option>
-                    <option value="EMAIL_NEWSLETTER">Email Newsletter</option>
-                    <option value="INSTAGRAM_NURTURE">Instagram Direct Message Nurture</option>
-                  </select>
+            {/* Interactive Smartphone Preview */}
+            <div className="lg:col-span-5 flex flex-col items-center justify-center">
+              <div className="w-full max-w-sm bg-slate-950 border-4 border-slate-800 rounded-3xl p-4 shadow-2xl space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-2 text-[11px] text-slate-400">
+                  <span className="font-bold text-white flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Khaki Tours Official
+                  </span>
+                  <span className="font-mono">Meta Verified</span>
                 </div>
 
-                <div>
-                  <label className="text-slate-400 block mb-1">Target Audience Segment</label>
-                  <select
-                    value={targetSegment}
-                    onChange={(e) => setTargetSegment(e.target.value as any)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white"
-                  >
-                    <option value="REPEAT_WALKERS">Repeat Mumbai Walkers (2+ Walks)</option>
-                    <option value="HIGH_LTV_ALUMNI">HNI Walkers (LTV &gt; ₹15,000)</option>
-                    <option value="CORPORATE_VIP">Corporate & B2B Decision Makers</option>
-                  </select>
+                <div className="bg-emerald-950/30 border border-emerald-500/20 p-3.5 rounded-2xl text-xs text-slate-200 space-y-2">
+                  <div className="whitespace-pre-line text-[11px] leading-relaxed">
+                    {customMessage.replace(/{{name}}/g, 'Karan Mehra')}
+                  </div>
+                  <div className="pt-2 border-t border-slate-800/80 flex items-center justify-center">
+                    <a
+                      href="https://khakitours.com/expeditions"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full text-center py-1.5 bg-emerald-600/40 hover:bg-emerald-600/60 text-emerald-300 font-bold rounded-lg text-[10px] transition"
+                    >
+                      Explore Expedition Dossier &rarr;
+                    </a>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="text-slate-400 block mb-1">Promotional Discount Incentive</label>
-                  <select
-                    value={promoDiscount}
-                    onChange={(e) => handleSelectPromoDiscount(e.target.value as any)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white"
-                  >
-                    <option value="NONE">No Discount (Standard Fare)</option>
-                    <option value="DISCOUNT_5">5% Repeat Courtesy (REPEAT05)</option>
-                    <option value="DISCOUNT_10">10% Special Offer (KHAKI10)</option>
-                    <option value="DISCOUNT_15">15% VIP Alumni Perk (ALUMNI15)</option>
-                  </select>
+                <div className="text-[10px] text-center text-slate-500">
+                  Preview reflects live guest WhatsApp receipt.
                 </div>
               </div>
-
-              <div>
-                <label className="text-slate-400 block mb-1">
-                  Message Content (Uses &quot;Khaki Heritage Ambassador&quot; for External Guests)
-                </label>
-                <textarea
-                  rows={5}
-                  value={customMessage}
-                  onChange={(e) => setCustomMessage(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white font-mono text-xs leading-relaxed"
-                />
-                <span className="text-[10px] text-slate-500 mt-1 block">
-                  Tag: <code className="text-amber-400">{'{{name}}'}</code> dynamically replaced with guest&apos;s full name.
-                </span>
-              </div>
-            </div>
-
-            {/* Meta Rate Guard Card */}
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
-              <div>
-                <span className="text-slate-400 block">Estimated Meta Dispatch Cost:</span>
-                <span className="text-lg font-bold text-amber-400 font-mono">₹{estimatedCost} INR</span>
-                <span className="text-[10px] text-slate-500 block mt-0.5">
-                  ({recipientCount} recipients &bull; ₹0.78 Meta Marketing Fee)
-                </span>
-              </div>
-
-              <button
-                onClick={handleLaunchCampaign}
-                disabled={isDispatching}
-                className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg shadow-lg shadow-amber-500/20 transition flex items-center gap-1.5 disabled:opacity-50"
-              >
-                <Send className="w-4 h-4" />
-                {isDispatching ? 'Launching Blast...' : 'Dispatch Broadcast'}
-              </button>
             </div>
           </div>
 
-          {/* Interactive Smartphone Preview */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center">
-            <div className="w-full max-w-sm bg-slate-950 border-4 border-slate-800 rounded-3xl p-4 shadow-2xl space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2 text-[11px] text-slate-400">
-                <span className="font-bold text-white flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Khaki Tours Official
-                </span>
-                <span className="font-mono">Meta Verified</span>
+          {/* Promo Code Performance Widget */}
+          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Tag className="w-4 h-4 text-amber-400" />
+                  Promo Code Redemption &amp; Yield Engine
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Track revenue generated across WhatsApp campaigns, Google Search ad promotions, and alumni loyalty perks.
+                </p>
+              </div>
+              <span className="text-xs font-mono text-emerald-400 font-bold">₹3,85,000 Total Attributed GMV</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="px-2 py-0.5 rounded text-xs font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                    REPEAT05
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-mono">5% Discount</span>
+                </div>
+                <div className="text-xl font-bold text-white font-mono">42 Redemptions</div>
+                <div className="text-xs text-emerald-400 font-mono">₹63,000 Attributed Sales</div>
+                <p className="text-[11px] text-slate-400">Targeted at repeat Mumbai walkers. 100% verified past walker opt-in rate.</p>
               </div>
 
-              <div className="bg-emerald-950/30 border border-emerald-500/20 p-3.5 rounded-2xl text-xs text-slate-200 space-y-2">
-                <div className="whitespace-pre-line text-[11px] leading-relaxed">
-                  {customMessage.replace(/{{name}}/g, 'Karan Mehra')}
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="px-2 py-0.5 rounded text-xs font-mono font-bold bg-blue-500/10 text-blue-300 border border-blue-500/20">
+                    KHAKI10
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-mono">10% Discount</span>
                 </div>
-                <div className="pt-2 border-t border-slate-800/80 flex items-center justify-center">
-                  <a
-                    href="https://khakitours.com/expeditions"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-full text-center py-1.5 bg-emerald-600/40 hover:bg-emerald-600/60 text-emerald-300 font-bold rounded-lg text-[10px] transition"
-                  >
-                    Explore Expedition Dossier &rarr;
-                  </a>
-                </div>
+                <div className="text-xl font-bold text-white font-mono">28 Redemptions</div>
+                <div className="text-xs text-emerald-400 font-mono">₹42,000 Attributed Sales</div>
+                <p className="text-[11px] text-slate-400">Featured in Google Search Ads &amp; low-occupancy flash seat broadcasts.</p>
               </div>
 
-              <div className="text-[10px] text-center text-slate-500">
-                Preview reflects live guest WhatsApp receipt.
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="px-2 py-0.5 rounded text-xs font-mono font-bold bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                    ALUMNI15
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-mono">15% Discount</span>
+                </div>
+                <div className="text-xl font-bold text-white font-mono">8 Redemptions</div>
+                <div className="text-xs text-purple-400 font-mono">₹2,80,000 Attributed Sales</div>
+                <p className="text-[11px] text-slate-400">VIP perk converting high-LTV walkers to Bhutan &amp; Hampi archival expeditions.</p>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* TAB 2: CROSS-SELL FUNNEL */}
+      {/* TAB 2: GOOGLE & META PAID ADS & ATTRIBUTION */}
+      {activeTab === 'DIGITAL_ADS_ATTRIBUTION' && (
+        <div className="space-y-6">
+          {/* Channel Performance Breakdown */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Google Ads */}
+            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400">
+                    <Search className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-white">Google Search Ads &amp; PMax</h3>
+                    <span className="text-[10px] text-slate-400">High-Intent Paid Acquisition</span>
+                  </div>
+                </div>
+                <span className="text-xs font-mono font-bold text-emerald-400">4.94x ROAS</span>
+              </div>
+
+              <div className="space-y-1.5 pt-2 text-xs border-t border-slate-800">
+                <div className="flex justify-between text-slate-400">
+                  <span>Monthly Ad Spend:</span>
+                  <span className="text-white font-mono font-bold">₹12,450</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Search Clicks:</span>
+                  <span className="text-white font-mono">1,840 (CPC ₹6.76)</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Direct Bookings:</span>
+                  <span className="text-emerald-400 font-mono font-bold">41 bookings</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Direct Revenue:</span>
+                  <span className="text-emerald-400 font-mono font-bold">₹61,500</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Meta Ads */}
+            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-rose-500/10 text-rose-400">
+                    <Instagram className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-white">Meta (Instagram &amp; FB) Ads</h3>
+                    <span className="text-[10px] text-slate-400">Visual Discovery &amp; Reels</span>
+                  </div>
+                </div>
+                <span className="text-xs font-mono font-bold text-emerald-400">3.98x ROAS</span>
+              </div>
+
+              <div className="space-y-1.5 pt-2 text-xs border-t border-slate-800">
+                <div className="flex justify-between text-slate-400">
+                  <span>Monthly Ad Spend:</span>
+                  <span className="text-white font-mono font-bold">₹9,800</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Impressions / CTR:</span>
+                  <span className="text-white font-mono">48,500 (2.8% CTR)</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Direct Bookings:</span>
+                  <span className="text-emerald-400 font-mono font-bold">26 bookings</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Direct Revenue:</span>
+                  <span className="text-emerald-400 font-mono font-bold">₹39,000</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Google Organic Search & Maps */}
+            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400">
+                    <Globe className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-white">Google Organic &amp; Maps</h3>
+                    <span className="text-[10px] text-slate-400">Zero-Cost Search Discovery</span>
+                  </div>
+                </div>
+                <span className="text-xs font-mono font-bold text-purple-400">Zero CAC</span>
+              </div>
+
+              <div className="space-y-1.5 pt-2 text-xs border-t border-slate-800">
+                <div className="flex justify-between text-slate-400">
+                  <span>Monthly Search Volume:</span>
+                  <span className="text-white font-mono font-bold">6,200 visits</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Google Maps Clicks:</span>
+                  <span className="text-white font-mono">980 to WhatsApp</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Organic Bookings:</span>
+                  <span className="text-emerald-400 font-mono font-bold">64 bookings</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Organic Revenue:</span>
+                  <span className="text-emerald-400 font-mono font-bold">₹96,000</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Roadmap Backlog Notice */}
+          <div className="bg-slate-950 border border-blue-500/30 rounded-xl p-3.5 flex items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-blue-500/20 text-blue-400 shrink-0">
+                <BarChart2 className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="font-bold text-white">Roadmap Backlog: Google Analytics 4 (GA4) Deep Site Integration</span>
+                <p className="text-[11px] text-slate-400">
+                  Queued for deployment alongside the public website redesign. Will provide direct real-time telemetry into visitor dropoffs and multi-touch booking paths.
+                </p>
+              </div>
+            </div>
+            <span className="px-2 py-1 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20 text-[10px] font-mono shrink-0 font-bold">
+              Revamp Backlog
+            </span>
+          </div>
+
+          {/* Top Google Search Keywords Attribution */}
+          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-3">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <Search className="w-4 h-4 text-blue-400" />
+              High-Converting Google Search Queries &amp; Intent Breakdown
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+              <div className="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                <div className="text-slate-400 text-[11px]">Query:</div>
+                <div className="font-bold text-white truncate">&quot;mumbai heritage walks&quot;</div>
+                <div className="mt-2 flex justify-between text-[11px] text-slate-400">
+                  <span>Clicks: <strong className="text-white">420</strong></span>
+                  <span className="text-emerald-400 font-bold">42% Conv</span>
+                </div>
+                <div className="text-[10px] text-slate-500 mt-0.5">Top: #FortWalk &amp; Colonial Tours</div>
+              </div>
+
+              <div className="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                <div className="text-slate-400 text-[11px]">Query:</div>
+                <div className="font-bold text-white truncate">&quot;open jeep safari south mumbai&quot;</div>
+                <div className="mt-2 flex justify-between text-[11px] text-slate-400">
+                  <span>Clicks: <strong className="text-white">290</strong></span>
+                  <span className="text-emerald-400 font-bold">38% Conv</span>
+                </div>
+                <div className="text-[10px] text-slate-500 mt-0.5">Top: Urban Safari Jeep</div>
+              </div>
+
+              <div className="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                <div className="text-slate-400 text-[11px]">Query:</div>
+                <div className="font-bold text-white truncate">&quot;best architectural walk fort mumbai&quot;</div>
+                <div className="mt-2 flex justify-between text-[11px] text-slate-400">
+                  <span>Clicks: <strong className="text-white">180</strong></span>
+                  <span className="text-emerald-400 font-bold">51% Conv</span>
+                </div>
+                <div className="text-[10px] text-slate-500 mt-0.5">Top: Art Deco &amp; Victorian Walks</div>
+              </div>
+
+              <div className="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                <div className="text-slate-400 text-[11px]">Query:</div>
+                <div className="font-bold text-white truncate">&quot;khaki tours colaba walk&quot;</div>
+                <div className="mt-2 flex justify-between text-[11px] text-slate-400">
+                  <span>Clicks: <strong className="text-white">310</strong></span>
+                  <span className="text-emerald-400 font-bold">64% Conv</span>
+                </div>
+                <div className="text-[10px] text-slate-500 mt-0.5">Direct Brand Search (Zero Bounce)</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Unified Paid Ads & Search Ingestion Stream */}
+          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4">
+            <div>
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
+                <Layers className="w-4 h-4 text-emerald-400" />
+                Live Ingestion Stream: Google Search &amp; Meta Ad Leads
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Real-time capture across Google Search Ads, Google Organic Search, and Meta Instagram Lead Forms. Automatically mapped to Kaevan&apos;s growth funnel and Priya&apos;s ops desk.
+              </p>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                  <tr>
+                    <th className="p-3">Lead Name</th>
+                    <th className="p-3">Acquisition Channel</th>
+                    <th className="p-3">Search Query / Creative Source</th>
+                    <th className="p-3">Tour Interest</th>
+                    <th className="p-3">Preferred Channel</th>
+                    <th className="p-3 text-right">Status / Value</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800 text-slate-300">
+                  {[
+                    { 
+                      name: 'Vikramaditya Nair', 
+                      channel: 'Google Search Ads', 
+                      badgeColor: 'bg-blue-500/10 text-blue-300 border-blue-500/20',
+                      source: 'Google PMax: "mumbai heritage walks weekend"', 
+                      tour: '#DurgasOf Mumbai Navratri Special', 
+                      commPref: 'WhatsApp Direct', 
+                      status: 'Converted (₹3,000)' 
+                    },
+                    { 
+                      name: 'Sarah Jenkins', 
+                      channel: 'Meta Instagram', 
+                      badgeColor: 'bg-rose-500/10 text-rose-300 border-rose-500/20',
+                      source: 'IG-Reels-ColonialHeritage', 
+                      tour: '#FortWalk Colonial', 
+                      commPref: 'Email Primary', 
+                      status: 'Auto-Welcomed' 
+                    },
+                    { 
+                      name: 'Aditi Merchant', 
+                      channel: 'Google Organic Search', 
+                      badgeColor: 'bg-purple-500/10 text-purple-300 border-purple-500/20',
+                      source: 'Search: "best architecture tour fort mumbai"', 
+                      tour: 'Art Deco & Oval Heritage Walk', 
+                      commPref: 'WhatsApp Direct', 
+                      status: 'Converted (₹1,500)' 
+                    },
+                    { 
+                      name: 'Rahul Chhabra', 
+                      channel: 'Meta Instagram', 
+                      badgeColor: 'bg-rose-500/10 text-rose-300 border-rose-500/20',
+                      source: 'IG-Sponsored-NightSafari', 
+                      tour: 'Urban Safari Jeep', 
+                      commPref: 'WhatsApp Direct', 
+                      status: 'Converted (₹4,500)' 
+                    },
+                    { 
+                      name: 'Ananya Deshmukh', 
+                      channel: 'Google Search Ads', 
+                      badgeColor: 'bg-blue-500/10 text-blue-300 border-blue-500/20',
+                      source: 'Search: "south mumbai walking tours weekend"', 
+                      tour: 'Gamdevi & Banganga Walk', 
+                      commPref: 'WhatsApp Direct', 
+                      status: 'Inbound Follow-up' 
+                    },
+                    { 
+                      name: 'Marc Dupont', 
+                      channel: 'Meta Instagram', 
+                      badgeColor: 'bg-rose-500/10 text-rose-300 border-rose-500/20',
+                      source: 'IG-Bio-Link-Inquiry', 
+                      tour: 'Private Architecture Tour', 
+                      commPref: 'Email Primary', 
+                      status: 'Quoted (Bespoke ₹22k)' 
+                    },
+                  ].map((l, idx) => (
+                    <tr key={idx} className="hover:bg-slate-800/30 transition">
+                      <td className="p-3 font-semibold text-white">{l.name}</td>
+                      <td className="p-3">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${l.badgeColor}`}>
+                          {l.channel}
+                        </span>
+                      </td>
+                      <td className="p-3 text-slate-300 font-mono text-[11px]">{l.source}</td>
+                      <td className="p-3 font-medium text-amber-300">{l.tour}</td>
+                      <td className="p-3">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-mono ${
+                          l.commPref.includes('Email') ? 'bg-blue-500/10 text-blue-300 border border-blue-500/20' : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20'
+                        }`}>
+                          {l.commPref}
+                        </span>
+                      </td>
+                      <td className="p-3 text-right">
+                        <span className="px-2.5 py-1 rounded bg-slate-800 text-slate-200 text-[10px] font-bold">
+                          {l.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: CROSS-SELL FUNNEL */}
       {activeTab === 'CROSS_SELL' && (
         <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4">
           <div>
@@ -451,7 +893,7 @@ export default function MarketingCampaignsPage() {
         </div>
       )}
 
-      {/* TAB 3: AUTOMATED REVIEW COLLECTOR */}
+      {/* TAB 4: AUTOMATED REVIEW COLLECTOR */}
       {activeTab === 'REVIEWS' && (
         <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -493,60 +935,6 @@ export default function MarketingCampaignsPage() {
               <div className="text-2xl font-bold text-purple-400 font-mono">Top #1 Pick</div>
               <p className="text-[11px] text-slate-400">Ranked #1 for &quot;Best heritage walk in Mumbai&quot; on ChatGPT, Claude &amp; Gemini.</p>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 4: INSTAGRAM LEADS DESK */}
-      {activeTab === 'INSTAGRAM_LEADS' && (
-        <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4">
-          <div>
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <Instagram className="w-4 h-4 text-rose-400" />
-              Instagram Ad Leads & Meta Campaign Attribution Desk
-            </h2>
-            <p className="text-xs text-slate-400 mt-1">
-              Real-time ingestion from Instagram Lead Forms (`POST /api/webhooks/meta-leads`) into Travel OS Inbox.
-            </p>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase font-semibold">
-                <tr>
-                  <th className="p-3">Lead Name</th>
-                  <th className="p-3">Campaign Source</th>
-                  <th className="p-3">Tour Interest</th>
-                  <th className="p-3">Channel Preferred</th>
-                  <th className="p-3 text-right">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800 text-slate-300">
-                {[
-                  { name: 'Sarah Jenkins', source: 'IG-Reels-ColonialHeritage', tour: '#FortWalk Colonial', channel: 'Email Primary', status: 'Auto-Welcomed' },
-                  { name: 'Rahul Chhabra', source: 'IG-Sponsored-NightSafari', tour: 'Urban Safari Jeep', channel: 'WhatsApp', status: 'Converted' },
-                  { name: 'Marc Dupont', source: 'IG-Bio-Link-Inquiry', tour: 'Private Architecture Tour', channel: 'Email Primary', status: 'Quoted (Bespoke)' },
-                ].map((l, idx) => (
-                  <tr key={idx} className="hover:bg-slate-800/30 transition">
-                    <td className="p-3 font-semibold text-white">{l.name}</td>
-                    <td className="p-3 text-amber-400 font-mono text-[11px]">{l.source}</td>
-                    <td className="p-3">{l.tour}</td>
-                    <td className="p-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-mono ${
-                        l.channel.includes('Email') ? 'bg-blue-500/10 text-blue-300 border border-blue-500/20' : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20'
-                      }`}>
-                        {l.channel}
-                      </span>
-                    </td>
-                    <td className="p-3 text-right">
-                      <span className="px-2.5 py-1 rounded bg-slate-800 text-slate-200 text-[10px] font-bold">
-                        {l.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         </div>
       )}
